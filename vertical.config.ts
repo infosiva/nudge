@@ -1,67 +1,151 @@
 /**
  * vertical.config.ts — THE ONLY FILE THAT CHANGES PER DEPLOYMENT
  *
- * Copy this file, fill in your vertical, deploy to Vercel.
- * All other code reads from this config at runtime.
+ * Two modes supported:
+ *   - 'marketplace'  → AI-matched provider/booking platform (ElderCare, TuneUp, etc.)
+ *   - 'ai-tool'      → AI-powered tool/product (tutor, quiz, gaming, coach, etc.)
+ *
+ * Fill in the relevant section for your mode. The UI adapts automatically.
  */
 
+// ── Shared types ─────────────────────────────────────────────
+
+export type AppMode = 'marketplace' | 'ai-tool'
+
+// Marketplace-specific
 export type PricingModel = 'hourly' | 'fixed' | 'session' | 'quote'
 export type BookingFlow  = 'instant' | 'quote_first' | 'consult_first'
 
-export interface VerticalConfig {
-  // ── Identity ────────────────────────────────────────────
-  id:          string   // slug used in URLs, DB tables, etc.
-  name:        string   // "CleanFast" / "ElderCare+" / "TuneUp"
+// AI Tool-specific
+export type AiToolType  = 'tutor' | 'quiz' | 'coach' | 'game' | 'analyzer' | 'generator'
+export type AgeGroup    = 'kids' | 'teens' | 'adults' | 'seniors' | 'family' | 'all'
+
+export interface Category {
+  id:    string
+  label: string
+  icon:  string   // emoji or lucide icon name
+  desc:  string
+}
+
+export interface Subject {
+  id:         string
+  label:      string
+  icon:       string
+  desc:       string
+  ageGroups?: AgeGroup[]   // which age groups this subject suits
+}
+
+// ── Marketplace config ────────────────────────────────────────
+
+export interface MarketplaceConfig {
+  mode: 'marketplace'
+
+  // Identity
+  id:          string
+  name:        string
   tagline:     string
-  domain:      string   // final domain, used in metadata
-  themeColor:  string   // tailwind color name: "blue" | "emerald" | "violet" etc.
+  domain:      string
+  themeColor:  string
 
-  // ── Provider terminology ─────────────────────────────────
-  providerLabel:  string  // "Cleaner" | "Carer" | "Mechanic" | "Tutor"
-  providerPlural: string  // "Cleaners" | "Carers" | "Mechanics" | "Tutors"
-  consumerLabel:  string  // "Client" | "Family" | "Driver" | "Student"
+  // Provider terminology
+  providerLabel:  string
+  providerPlural: string
+  consumerLabel:  string
 
-  // ── Service categories ───────────────────────────────────
+  // Categories
   categories: Category[]
 
-  // ── Booking ──────────────────────────────────────────────
-  pricingModel:   PricingModel
-  bookingFlow:    BookingFlow
-  minPrice:       number   // £ — floor for AI price suggestion
-  maxPrice:       number   // £ — ceiling
-  sessionMinutes: number   // default session length
+  // Booking
+  pricingModel:       PricingModel
+  bookingFlow:        BookingFlow
+  minPrice:           number
+  maxPrice:           number
+  sessionMinutes:     number
   platformFeePercent: number
 
-  // ── AI context ───────────────────────────────────────────
-  aiSystemPrompt: string   // injected into every AI call
-  aiMatchHints:   string[] // extra signals for provider matching
+  // AI
+  aiSystemPrompt: string
+  aiMatchHints:   string[]
 
-  // ── Features (toggle) ───────────────────────────────────
+  // Features
   features: {
-    backgroundCheck:  boolean
-    portfolioPhotos:  boolean
-    videoIntro:       boolean
-    instantBook:      boolean
-    recurringBook:    boolean
-    homeVisit:        boolean
-    remoteSession:    boolean
-    groupSession:     boolean
-    insuranceBadge:   boolean
-    aiDiagnosis:      boolean   // e.g. car fault codes before mechanic
-    careJournal:      boolean   // e.g. daily notes for elder care
+    backgroundCheck: boolean
+    portfolioPhotos: boolean
+    videoIntro:      boolean
+    instantBook:     boolean
+    recurringBook:   boolean
+    homeVisit:       boolean
+    remoteSession:   boolean
+    groupSession:    boolean
+    insuranceBadge:  boolean
+    aiDiagnosis:     boolean
+    careJournal:     boolean
   }
 
-  // ── SEO / meta ───────────────────────────────────────────
+  // SEO
   metaTitle:       string
   metaDescription: string
   keywords:        string[]
 }
 
-export interface Category {
-  id:    string
-  label: string
-  icon:  string  // emoji or lucide icon name
-  desc:  string
+// ── AI Tool config ────────────────────────────────────────────
+
+export interface AiToolConfig {
+  mode: 'ai-tool'
+
+  // Identity
+  id:         string
+  name:       string
+  tagline:    string
+  domain:     string
+  themeColor: string  // tailwind color: "blue" | "emerald" | "violet" | "rose" | etc.
+
+  // Tool type & audience
+  toolType:   AiToolType
+  ageGroups:  AgeGroup[]    // who this app targets
+  userLabel:  string        // "Student" | "Learner" | "Player" | "Player"
+
+  // Subject / topic areas
+  subjects: Subject[]
+
+  // AI
+  aiSystemPrompt:    string   // base persona injected into every AI call
+  aiTutorPrompt?:    string   // for tutor mode — how AI teaches
+  aiQuizPrompt?:     string   // for quiz mode — how AI generates questions
+  aiCoachPrompt?:    string   // for coach mode — how AI gives feedback
+
+  // Features (toggle per product)
+  features: {
+    aiTutor:        boolean   // AI explains topics conversationally
+    quiz:           boolean   // dynamic AI-generated quizzes
+    learningPath:   boolean   // AI builds personalised topic progression
+    multiplayer:    boolean   // multiple players in same session (family, class)
+    leaderboard:    boolean   // scores & rankings
+    streaks:        boolean   // daily streak tracking
+    ageAdaptive:    boolean   // AI adapts language/difficulty to age profile
+    progressTrack:  boolean   // track completed topics & quiz scores
+    familyMode:     boolean   // register a family, play together
+    exportResults:  boolean   // download scores / certificate
+  }
+
+  // SEO
+  metaTitle:       string
+  metaDescription: string
+  keywords:        string[]
+}
+
+// ── Union type — use this everywhere ─────────────────────────
+
+export type VerticalConfig = MarketplaceConfig | AiToolConfig
+
+// ── Type guards ───────────────────────────────────────────────
+
+export function isMarketplace(c: VerticalConfig): c is MarketplaceConfig {
+  return c.mode === 'marketplace'
+}
+
+export function isAiTool(c: VerticalConfig): c is AiToolConfig {
+  return c.mode === 'ai-tool'
 }
 
 // ════════════════════════════════════════════════════════════
@@ -69,109 +153,290 @@ export interface Category {
 // ════════════════════════════════════════════════════════════
 
 const config: VerticalConfig = {
-  // ── Elder Care ───────────────────────────────────────────
-  id:         'eldercare',
-  name:       'ElderCare+',
-  tagline:    'Trusted carers for your loved ones — found in minutes, not days',
-  domain:     'eldercare.plus',
-  themeColor: 'violet',
+  // ── Nudge — AI Personal Tutor ────────────────────────────
+  mode:       'ai-tool',
+  id:         'nudge',
+  name:       'Nudge',
+  tagline:    'The AI that nudges you forward — learn anything, at your pace, your level',
+  domain:     'nudgeai.com',
+  themeColor: 'emerald',
 
-  providerLabel:  'Carer',
-  providerPlural: 'Carers',
-  consumerLabel:  'Family',
+  toolType:  'tutor',
+  ageGroups: ['kids', 'teens', 'adults'],
+  userLabel: 'Learner',
 
-  categories: [
-    { id: 'companionship',  label: 'Companionship',       icon: '🤝', desc: 'Social visits, conversation, light outings' },
-    { id: 'personal-care',  label: 'Personal Care',       icon: '🛁', desc: 'Bathing, dressing, hygiene assistance' },
-    { id: 'dementia',       label: 'Dementia Support',    icon: '🧠', desc: 'Specialist memory care at home' },
-    { id: 'medication',     label: 'Medication Prompts',  icon: '💊', desc: 'Reminders, administration support' },
-    { id: 'mobility',       label: 'Mobility Assistance', icon: '🦽', desc: 'Transfers, exercise, fall prevention' },
-    { id: 'night-care',     label: 'Overnight / Live-in', icon: '🌙', desc: '24hr or night-shift live-in care' },
-    { id: 'post-hospital',  label: 'Post-Hospital Care',  icon: '🏥', desc: 'Recovery support after discharge' },
-    { id: 'end-of-life',    label: 'Palliative Support',  icon: '🕊️', desc: 'Compassionate end-of-life companionship' },
+  subjects: [
+    { id: 'maths',     label: 'Maths',           icon: '➕', desc: 'Numbers, algebra, geometry & problem solving',  ageGroups: ['kids','teens','adults'] },
+    { id: 'science',   label: 'Science',          icon: '🔬', desc: 'Physics, chemistry, biology & earth science',   ageGroups: ['kids','teens','adults'] },
+    { id: 'english',   label: 'English',          icon: '📖', desc: 'Reading, writing, grammar & comprehension',     ageGroups: ['kids','teens','adults'] },
+    { id: 'history',   label: 'History',          icon: '🏛️', desc: 'World history, timelines & key events',         ageGroups: ['teens','adults'] },
+    { id: 'geography', label: 'Geography',        icon: '🌍', desc: 'Maps, climate, countries & human geography',    ageGroups: ['kids','teens','adults'] },
+    { id: 'coding',    label: 'Coding',           icon: '💻', desc: 'Python, web basics, logic & algorithms',        ageGroups: ['teens','adults'] },
+    { id: 'languages', label: 'Languages',        icon: '🗣️', desc: 'French, Spanish, Tamil & more',                ageGroups: ['kids','teens','adults'] },
+    { id: 'finance',   label: 'Personal Finance', icon: '💰', desc: 'Budgeting, saving, investing & tax basics',     ageGroups: ['adults'] },
   ],
 
-  pricingModel:        'hourly',
-  bookingFlow:         'consult_first',
-  minPrice:            15,
-  maxPrice:            40,
-  sessionMinutes:      60,
-  platformFeePercent:  12,
+  aiSystemPrompt: `You are Nudge, an AI tutor that gently pushes learners forward.
+Adapt your teaching style completely to the learner's age and level.
+For kids: use simple words, analogies, emojis, and short sentences.
+For teens: be engaging and relatable, never preachy.
+For adults: be concise and professional, skip basics they likely know.
+Always check understanding before moving on. Make every learner feel capable.`,
 
-  aiSystemPrompt: `You are a compassionate care coordinator for ElderCare+.
-Help families find the right carer for their elderly relative.
-Ask about: the person's age, main challenges, preferred schedule,
-personality (quiet/social), whether they have dementia or mobility issues,
-and whether family can be present during visits.
-Never give medical advice. Always recommend consulting a GP.
-Be warm, empathetic, and reassuring — families are often stressed.`,
+  aiTutorPrompt: `Structure every lesson as: Hook (why this matters) → Core concept → Example → Check question.
+Ask one question to confirm understanding before continuing.
+One concept per message — never overwhelm.`,
 
-  aiMatchHints: [
-    'dementia certification', 'moving and handling trained',
-    'first aid', 'palliative care experience', 'live-in experience',
-    'driving licence', 'same-gender preference',
-  ],
+  aiQuizPrompt: `Generate a 5-question micro-quiz for the topic just taught.
+Mix types: multiple choice, true/false, fill-in-the-blank.
+Adapt difficulty to the learner's age and level.
+Return JSON: { questions: [{ type, question, options?, answer, explanation }] }`,
 
   features: {
-    backgroundCheck:  true,
-    portfolioPhotos:  true,
-    videoIntro:       true,
-    instantBook:      false,
-    recurringBook:    true,
-    homeVisit:        true,
-    remoteSession:    false,
-    groupSession:     false,
-    insuranceBadge:   true,
-    aiDiagnosis:      false,
-    careJournal:      true,
+    aiTutor:       true,
+    quiz:          true,
+    learningPath:  true,
+    multiplayer:   false,
+    leaderboard:   false,
+    streaks:       true,
+    ageAdaptive:   true,
+    progressTrack: true,
+    familyMode:    false,
+    exportResults: false,
   },
 
-  metaTitle:       'ElderCare+ — Find Trusted Home Carers Near You',
-  metaDescription: 'AI-matched home carers for older adults. Background-checked, insured, reviewed by real families. Book a free consultation today.',
-  keywords:        ['home carer', 'elder care', 'elderly care at home', 'dementia carer', 'live-in carer'],
+  metaTitle:       'Nudge — AI Tutor That Adapts to You',
+  metaDescription: 'Learn maths, science, coding and more with an AI teacher that adapts to your age and level. Free personalised learning paths.',
+  keywords:        ['ai tutor', 'personalised learning', 'nudge ai', 'ai teacher', 'learn online', 'kids tutor'],
 }
 
 export default config
 
 // ════════════════════════════════════════════════════════════
-// OTHER VERTICALS (copy + swap the export above)
+// ALL PRESETS — copy any block, paste as config above, deploy
 // ════════════════════════════════════════════════════════════
 
-export const PRESETS: Record<string, Partial<VerticalConfig>> = {
+// ── AI TOOL PRESETS ──────────────────────────────────────────
+
+export const AI_TOOL_PRESETS: Record<string, AiToolConfig> = {
+
+  // Option A — Kwizzo: Family Quiz Game (ACTIVE above)
+  kwizzo: {
+    mode:       'ai-tool',
+    id:         'kwizzo',
+    name:       'Kwizzo',
+    tagline:    'The family quiz game where every age wins — powered by AI',
+    domain:     'kwizzo.ai',
+    themeColor: 'violet',
+    toolType:   'game',
+    ageGroups:  ['family'],
+    userLabel:  'Player',
+    subjects: [
+      { id: 'science',   label: 'Science',           icon: '🔬', desc: 'Nature, space, biology & experiments' },
+      { id: 'history',   label: 'History',            icon: '🏛️', desc: 'World events, famous people & civilisations' },
+      { id: 'geography', label: 'Geography',          icon: '🌍', desc: 'Countries, capitals, landscapes & cultures' },
+      { id: 'sport',     label: 'Sport',              icon: '⚽', desc: 'Football, Olympics, records & athletes' },
+      { id: 'movies',    label: 'Movies & TV',        icon: '🎬', desc: 'Films, series, actors & famous quotes' },
+      { id: 'music',     label: 'Music',              icon: '🎵', desc: 'Artists, lyrics, genres & music history' },
+      { id: 'food',      label: 'Food & Cooking',     icon: '🍕', desc: 'Recipes, cuisines, ingredients & chefs' },
+      { id: 'animals',   label: 'Animals',            icon: '🦁', desc: 'Wildlife, pets, habitats & fun facts' },
+      { id: 'tech',      label: 'Technology',         icon: '💻', desc: 'Gadgets, internet, coding & inventions' },
+      { id: 'general',   label: 'General Knowledge',  icon: '🧠', desc: 'Mixed bag — something for everyone' },
+    ],
+    aiSystemPrompt: `You are KwizBot, the AI host of Kwizzo — the family quiz game where every age plays together.
+Generate engaging, age-appropriate quiz questions for players of all ages in the same room.
+Be energetic, encouraging, and fun. Never make questions offensive or inappropriate for children.
+Always return valid JSON when asked to generate questions.`,
+    aiQuizPrompt: `Generate quiz questions that work across age groups simultaneously.
+For each question: question text, 4 multiple choice options, correct answer, fun fact explanation, difficulty (easy/medium/hard).
+Adapt difficulty by player age: kids (5-12) easy, teens (13-17) medium, adults (18+) hard.`,
+    features: {
+      aiTutor: false, quiz: true, learningPath: false, multiplayer: true,
+      leaderboard: true, streaks: false, ageAdaptive: true,
+      progressTrack: true, familyMode: true, exportResults: true,
+    },
+    metaTitle:       'Kwizzo — The Family Quiz Game Powered by AI',
+    metaDescription: 'AI-generated family quiz — age-perfect questions for kids to grandparents. Free to play.',
+    keywords:        ['family quiz', 'ai quiz game', 'kwizzo', 'kids quiz', 'multiplayer quiz'],
+  },
+
+  // Option B — Nudge: AI Personal Tutor
+  nudge: {
+    mode:       'ai-tool',
+    id:         'nudge',
+    name:       'Nudge',
+    tagline:    'The AI that nudges you forward — learn anything, at your pace, your level',
+    domain:     'nudgeai.com',
+    themeColor: 'emerald',
+    toolType:   'tutor',
+    ageGroups:  ['kids', 'teens', 'adults'],
+    userLabel:  'Learner',
+    subjects: [
+      { id: 'maths',     label: 'Maths',          icon: '➕', desc: 'Numbers, algebra, geometry & problem solving',  ageGroups: ['kids','teens','adults'] },
+      { id: 'science',   label: 'Science',         icon: '🔬', desc: 'Physics, chemistry, biology & earth science',   ageGroups: ['kids','teens','adults'] },
+      { id: 'english',   label: 'English',         icon: '📖', desc: 'Reading, writing, grammar & comprehension',     ageGroups: ['kids','teens','adults'] },
+      { id: 'history',   label: 'History',         icon: '🏛️', desc: 'World history, timelines & key events',         ageGroups: ['teens','adults'] },
+      { id: 'geography', label: 'Geography',       icon: '🌍', desc: 'Maps, climate, countries & human geography',    ageGroups: ['kids','teens','adults'] },
+      { id: 'coding',    label: 'Coding',          icon: '💻', desc: 'Python, web basics, logic & algorithms',        ageGroups: ['teens','adults'] },
+      { id: 'languages', label: 'Languages',       icon: '🗣️', desc: 'French, Spanish, Tamil & more',                ageGroups: ['kids','teens','adults'] },
+      { id: 'finance',   label: 'Personal Finance',icon: '💰', desc: 'Budgeting, saving, investing & tax basics',     ageGroups: ['adults'] },
+    ],
+    aiSystemPrompt: `You are Nudge, an AI tutor that gently pushes learners forward.
+Adapt your teaching style completely to the learner's age and level.
+For kids: use simple words, analogies, emojis, and short sentences.
+For teens: be engaging and relatable, never preachy.
+For adults: be concise and professional, skip basics they likely know.
+Always check understanding before moving on. Make every learner feel capable.`,
+    aiTutorPrompt: `Structure every lesson as: Hook (why this matters) → Core concept → Example → Check question.
+Ask one question to confirm understanding before continuing.
+One concept per message — never overwhelm.`,
+    aiQuizPrompt: `Generate a 5-question micro-quiz for the topic just taught.
+Mix types: multiple choice, true/false, fill-in-the-blank.
+Adapt difficulty to the learner's age and level.
+Return JSON: { questions: [{ type, question, options?, answer, explanation }] }`,
+    features: {
+      aiTutor: true, quiz: true, learningPath: true, multiplayer: false,
+      leaderboard: false, streaks: true, ageAdaptive: true,
+      progressTrack: true, familyMode: false, exportResults: false,
+    },
+    metaTitle:       'Nudge — AI Tutor That Adapts to You',
+    metaDescription: 'Learn maths, science, coding and more with an AI teacher that adapts to your age and level. Free personalised learning paths.',
+    keywords:        ['ai tutor', 'personalised learning', 'nudge ai', 'ai teacher', 'learn online', 'kids tutor'],
+  },
+
+  // Option C — Questly: Live AI Classroom Quiz
+  questly: {
+    mode:       'ai-tool',
+    id:         'questly',
+    name:       'Questly',
+    tagline:    'Start a quest — AI generates your live quiz, your class competes in real time',
+    domain:     'questly.ai',
+    themeColor: 'blue',
+    toolType:   'quiz',
+    ageGroups:  ['kids', 'teens', 'adults', 'all'],
+    userLabel:  'Student',
+    subjects: [
+      { id: 'maths',     label: 'Maths',       icon: '➕', desc: 'From arithmetic to calculus' },
+      { id: 'science',   label: 'Science',      icon: '🔬', desc: 'Physics, chemistry & biology' },
+      { id: 'english',   label: 'English',      icon: '📖', desc: 'Language, literature & writing' },
+      { id: 'history',   label: 'History',      icon: '🏛️', desc: 'Events, timelines & people' },
+      { id: 'geography', label: 'Geography',    icon: '🌍', desc: 'Maps, climate & cultures' },
+      { id: 'coding',    label: 'Coding',       icon: '💻', desc: 'Web, Python & logic' },
+      { id: 'general',   label: 'General',      icon: '🧠', desc: 'Custom topic — anything goes' },
+    ],
+    aiSystemPrompt: `You are the AI quest master on Questly — a live AI-powered quiz platform.
+Your role: generate questions, explain answers, keep the session energetic and educational.
+Adapt question difficulty based on the age group set for the session.
+Always explain the correct answer after each question — this is learning, not just testing.
+Return valid JSON for all question generation requests.`,
+    aiQuizPrompt: `Generate a quiz session of 10-15 questions on the given topic and difficulty level.
+Each question: question text, 4 options (A/B/C/D), correct answer, brief explanation (1-2 sentences).
+Scale difficulty: easy (age <12), medium (12-16), hard (16+).
+Return JSON: { topic, difficulty, questions: [{ id, question, options, answer, explanation }] }`,
+    aiTutorPrompt: `After each quiz round, give a brief debrief: what the group got right, common mistakes, and one key takeaway.
+Be encouraging. Highlight the top scorer. Suggest what to revise next.`,
+    features: {
+      aiTutor: true, quiz: true, learningPath: false, multiplayer: true,
+      leaderboard: true, streaks: false, ageAdaptive: true,
+      progressTrack: true, familyMode: false, exportResults: true,
+    },
+    metaTitle:       'Questly — Live AI Quiz Sessions for Any Group',
+    metaDescription: 'Host a live quiz session on any topic. AI generates questions instantly, tracks scores, explains answers. Free to start.',
+    keywords:        ['live quiz', 'questly', 'ai quiz', 'kahoot alternative', 'interactive quiz', 'classroom quiz'],
+  },
+}
+
+// ── MARKETPLACE PRESETS ──────────────────────────────────────
+
+export const MARKETPLACE_PRESETS: Record<string, MarketplaceConfig> = {
+
+  eldercare: {
+    mode: 'marketplace',
+    id: 'eldercare', name: 'ElderCare+', themeColor: 'violet',
+    tagline: 'Trusted carers for your loved ones — found in minutes, not days',
+    domain: 'eldercare.plus',
+    providerLabel: 'Carer', providerPlural: 'Carers', consumerLabel: 'Family',
+    categories: [
+      { id: 'companionship', label: 'Companionship',       icon: '🤝', desc: 'Social visits, conversation, light outings' },
+      { id: 'personal-care', label: 'Personal Care',       icon: '🛁', desc: 'Bathing, dressing, hygiene assistance' },
+      { id: 'dementia',      label: 'Dementia Support',    icon: '🧠', desc: 'Specialist memory care at home' },
+      { id: 'medication',    label: 'Medication Prompts',  icon: '💊', desc: 'Reminders, administration support' },
+      { id: 'mobility',      label: 'Mobility Assistance', icon: '🦽', desc: 'Transfers, exercise, fall prevention' },
+      { id: 'night-care',    label: 'Overnight / Live-in', icon: '🌙', desc: '24hr or night-shift live-in care' },
+    ],
+    pricingModel: 'hourly', bookingFlow: 'consult_first',
+    minPrice: 15, maxPrice: 40, sessionMinutes: 60, platformFeePercent: 12,
+    aiSystemPrompt: `You are a compassionate care coordinator for ElderCare+. Help families find the right carer.
+Ask about age, main challenges, schedule, personality, and whether dementia or mobility issues are present.
+Never give medical advice. Be warm and reassuring.`,
+    aiMatchHints: ['dementia certification', 'moving and handling trained', 'first aid', 'palliative care experience'],
+    features: {
+      backgroundCheck: true, portfolioPhotos: true, videoIntro: true,
+      instantBook: false, recurringBook: true, homeVisit: true,
+      remoteSession: false, groupSession: false, insuranceBadge: true,
+      aiDiagnosis: false, careJournal: true,
+    },
+    metaTitle: 'ElderCare+ — Find Trusted Home Carers Near You',
+    metaDescription: 'AI-matched home carers for older adults. Background-checked, insured, reviewed by real families.',
+    keywords: ['home carer', 'elder care', 'elderly care at home', 'dementia carer'],
+  },
+
   mechanics: {
+    mode: 'marketplace',
     id: 'mechanics', name: 'MechFix', themeColor: 'orange',
     tagline: 'Find a trusted local mechanic — AI pre-diagnosis included',
+    domain: 'mechfix.app',
     providerLabel: 'Mechanic', providerPlural: 'Mechanics', consumerLabel: 'Driver',
+    categories: [
+      { id: 'servicing',  label: 'Servicing',        icon: '🔧', desc: 'Oil, filters, routine maintenance' },
+      { id: 'bodywork',   label: 'Bodywork',          icon: '🚗', desc: 'Dents, scratches, paint repairs' },
+      { id: 'tyres',      label: 'Tyres',             icon: '🔄', desc: 'Fitting, balancing, puncture repair' },
+      { id: 'electrics',  label: 'Electrics',         icon: '⚡', desc: 'Battery, wiring, diagnostics' },
+      { id: 'mot',        label: 'MOT & Inspection',  icon: '📋', desc: 'Annual checks & certificates' },
+    ],
     pricingModel: 'quote', bookingFlow: 'quote_first',
-    features: { backgroundCheck:false, portfolioPhotos:true, videoIntro:false,
-      instantBook:false, recurringBook:false, homeVisit:true, remoteSession:false,
-      groupSession:false, insuranceBadge:true, aiDiagnosis:true, careJournal:false },
+    minPrice: 30, maxPrice: 500, sessionMinutes: 90, platformFeePercent: 10,
+    aiSystemPrompt: `You are an AI mechanic advisor for MechFix. Help drivers describe their car problem.
+Ask: make, model, year, symptoms (noises, warning lights, behaviour). Give a likely diagnosis before quoting.
+Never promise a fixed price — always say a mechanic will confirm.`,
+    aiMatchHints: ['dealer-trained', 'EV certified', 'bodywork specialist', 'MOT tester'],
+    features: {
+      backgroundCheck: false, portfolioPhotos: true, videoIntro: false,
+      instantBook: false, recurringBook: false, homeVisit: true,
+      remoteSession: false, groupSession: false, insuranceBadge: true,
+      aiDiagnosis: true, careJournal: false,
+    },
+    metaTitle: 'MechFix — Find a Trusted Local Mechanic with AI Pre-Diagnosis',
+    metaDescription: 'Describe your car problem in plain English. AI diagnoses it first, then matches you with a verified local mechanic.',
+    keywords: ['local mechanic', 'car repair', 'MOT', 'ai car diagnosis', 'mechanic near me'],
   },
+
   music: {
+    mode: 'marketplace',
     id: 'music', name: 'TuneUp', themeColor: 'indigo',
     tagline: 'Learn any instrument from verified local tutors',
+    domain: 'tuneup.app',
     providerLabel: 'Tutor', providerPlural: 'Tutors', consumerLabel: 'Student',
+    categories: [
+      { id: 'guitar',  label: 'Guitar',    icon: '🎸', desc: 'Acoustic, electric, classical' },
+      { id: 'piano',   label: 'Piano',     icon: '🎹', desc: 'Classical, jazz, contemporary' },
+      { id: 'vocals',  label: 'Vocals',    icon: '🎤', desc: 'Singing, breath control, performance' },
+      { id: 'drums',   label: 'Drums',     icon: '🥁', desc: 'Kit, hand percussion, rhythm' },
+      { id: 'violin',  label: 'Violin',    icon: '🎻', desc: 'Classical & folk strings' },
+    ],
     pricingModel: 'session', bookingFlow: 'instant',
-    features: { backgroundCheck:true, portfolioPhotos:true, videoIntro:true,
-      instantBook:true, recurringBook:true, homeVisit:true, remoteSession:true,
-      groupSession:true, insuranceBadge:false, aiDiagnosis:false, careJournal:false },
-  },
-  wedding: {
-    id: 'wedding', name: 'WedFlow', themeColor: 'rose',
-    tagline: 'Every wedding vendor you need — curated, reviewed, instantly bookable',
-    providerLabel: 'Vendor', providerPlural: 'Vendors', consumerLabel: 'Couple',
-    pricingModel: 'fixed', bookingFlow: 'quote_first',
-    features: { backgroundCheck:false, portfolioPhotos:true, videoIntro:true,
-      instantBook:false, recurringBook:false, homeVisit:false, remoteSession:false,
-      groupSession:false, insuranceBadge:false, aiDiagnosis:false, careJournal:false },
-  },
-  nutrition: {
-    id: 'nutrition', name: 'NutriCoach', themeColor: 'green',
-    tagline: 'Personalised nutrition coaching — AI-matched to your goals',
-    providerLabel: 'Nutritionist', providerPlural: 'Nutritionists', consumerLabel: 'Client',
-    pricingModel: 'session', bookingFlow: 'consult_first',
-    features: { backgroundCheck:false, portfolioPhotos:false, videoIntro:true,
-      instantBook:false, recurringBook:true, homeVisit:false, remoteSession:true,
-      groupSession:true, insuranceBadge:true, aiDiagnosis:false, careJournal:true },
+    minPrice: 20, maxPrice: 80, sessionMinutes: 60, platformFeePercent: 15,
+    aiSystemPrompt: `You are a music tutor matchmaker for TuneUp. Help students find the right tutor.
+Ask about: instrument, current level (total beginner to advanced), goals (hobby or grade exams), preferred style, age, remote or in-person.`,
+    aiMatchHints: ['grade 8 qualified', 'DBS checked', 'online lessons', 'classical trained', 'jazz specialist'],
+    features: {
+      backgroundCheck: true, portfolioPhotos: true, videoIntro: true,
+      instantBook: true, recurringBook: true, homeVisit: true,
+      remoteSession: true, groupSession: true, insuranceBadge: false,
+      aiDiagnosis: false, careJournal: false,
+    },
+    metaTitle: 'TuneUp — Find Verified Music Tutors Near You',
+    metaDescription: 'AI-matched music tutors for all ages and instruments. In-person or online. Book instantly.',
+    keywords: ['music tutor', 'guitar lessons', 'piano lessons', 'music teacher', 'learn instrument'],
   },
 }

@@ -13,6 +13,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+          <span className="text-2xl">🌱</span>
           <span className={`${theme.gradientText} font-extrabold tracking-tight`}>
             {config.name}
           </span>
@@ -20,15 +21,13 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
-          <Link href="/search"    className="hover:text-white transition-colors">Find a {config.providerLabel}</Link>
-          <Link href="/providers" className="hover:text-white transition-colors">For {config.providerPlural}</Link>
-          <Link href="/how-it-works" className="hover:text-white transition-colors">How it works</Link>
+          <Link href="/#subjects"      className="hover:text-white transition-colors">Subjects</Link>
+          <Link href="/#how-it-works"  className="hover:text-white transition-colors">How it works</Link>
         </div>
 
         {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/login"    className={btn.ghost}>Log in</Link>
-          <Link href="/chat"     className={btn.primary}>Get matched</Link>
+          <Link href="/onboard" className={btn.primary}>Start Learning Free</Link>
         </div>
 
         {/* Mobile toggle */}
@@ -40,10 +39,9 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <div className="md:hidden border-t border-white/[0.06] px-6 py-4 flex flex-col gap-4 text-sm">
-          <Link href="/search"       className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>Find a {config.providerLabel}</Link>
-          <Link href="/providers"    className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>For {config.providerPlural}</Link>
-          <Link href="/how-it-works" className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>How it works</Link>
-          <Link href="/chat"         className={btn.primary}                    onClick={() => setOpen(false)}>Get matched free</Link>
+          <Link href="/#subjects"     className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>Subjects</Link>
+          <Link href="/#how-it-works" className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>How it works</Link>
+          <Link href="/onboard"       className={btn.primary}                    onClick={() => setOpen(false)}>Start Learning Free</Link>
         </div>
       )}
     </nav>
