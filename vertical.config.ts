@@ -153,12 +153,12 @@ export function isAiTool(c: VerticalConfig): c is AiToolConfig {
 // ════════════════════════════════════════════════════════════
 
 const config: VerticalConfig = {
-  // ── Nudge — AI Personal Tutor ────────────────────────────
+  // ── Tutiq — AI Personal Tutor ────────────────────────────
   mode:       'ai-tool',
-  id:         'nudge',
-  name:       'Nudge',
-  tagline:    'The AI that nudges you forward — learn anything, at your pace, your level',
-  domain:     'nudgeai.com',
+  id:         'tutiq',
+  name:       'Tutiq',
+  tagline:    'Your AI tutor that adapts to you — learn anything, at your pace, your level',
+  domain:     'tutiq.app',
   themeColor: 'emerald',
 
   toolType:  'tutor',
@@ -176,8 +176,8 @@ const config: VerticalConfig = {
     { id: 'finance',   label: 'Personal Finance', icon: '💰', desc: 'Budgeting, saving, investing & tax basics',     ageGroups: ['adults'] },
   ],
 
-  aiSystemPrompt: `You are Nudge, an AI tutor that gently pushes learners forward.
-Adapt your teaching style completely to the learner's age and level.
+  aiSystemPrompt: `You are Tutiq, an AI tutor that adapts completely to each learner.
+Adapt your teaching style to the learner's age and level.
 For kids: use simple words, analogies, emojis, and short sentences.
 For teens: be engaging and relatable, never preachy.
 For adults: be concise and professional, skip basics they likely know.
@@ -205,9 +205,9 @@ Return JSON: { questions: [{ type, question, options?, answer, explanation }] }`
     exportResults: false,
   },
 
-  metaTitle:       'Nudge — AI Tutor That Adapts to You',
+  metaTitle:       'Tutiq — AI Tutor That Adapts to You',
   metaDescription: 'Learn maths, science, coding and more with an AI teacher that adapts to your age and level. Free personalised learning paths.',
-  keywords:        ['ai tutor', 'personalised learning', 'nudge ai', 'ai teacher', 'learn online', 'kids tutor'],
+  keywords:        ['ai tutor', 'personalised learning', 'tutiq', 'ai teacher', 'learn online', 'kids tutor'],
 }
 
 export default config
@@ -260,13 +260,13 @@ Adapt difficulty by player age: kids (5-12) easy, teens (13-17) medium, adults (
     keywords:        ['family quiz', 'ai quiz game', 'kwizzo', 'kids quiz', 'multiplayer quiz'],
   },
 
-  // Option B — Nudge: AI Personal Tutor
-  nudge: {
+  // Option B — Tutiq: AI Personal Tutor
+  tutiq: {
     mode:       'ai-tool',
-    id:         'nudge',
-    name:       'Nudge',
-    tagline:    'The AI that nudges you forward — learn anything, at your pace, your level',
-    domain:     'nudgeai.com',
+    id:         'tutiq',
+    name:       'Tutiq',
+    tagline:    'Your AI tutor that adapts to you — learn anything, at your pace, your level',
+    domain:     'tutiq.app',
     themeColor: 'emerald',
     toolType:   'tutor',
     ageGroups:  ['kids', 'teens', 'adults'],
@@ -281,7 +281,7 @@ Adapt difficulty by player age: kids (5-12) easy, teens (13-17) medium, adults (
       { id: 'languages', label: 'Languages',       icon: '🗣️', desc: 'French, Spanish, Tamil & more',                ageGroups: ['kids','teens','adults'] },
       { id: 'finance',   label: 'Personal Finance',icon: '💰', desc: 'Budgeting, saving, investing & tax basics',     ageGroups: ['adults'] },
     ],
-    aiSystemPrompt: `You are Nudge, an AI tutor that gently pushes learners forward.
+    aiSystemPrompt: `You are Tutiq, an AI tutor that adapts completely to each learner.
 Adapt your teaching style completely to the learner's age and level.
 For kids: use simple words, analogies, emojis, and short sentences.
 For teens: be engaging and relatable, never preachy.
@@ -299,9 +299,9 @@ Return JSON: { questions: [{ type, question, options?, answer, explanation }] }`
       leaderboard: false, streaks: true, ageAdaptive: true,
       progressTrack: true, familyMode: false, exportResults: false,
     },
-    metaTitle:       'Nudge — AI Tutor That Adapts to You',
+    metaTitle:       'Tutiq — AI Tutor That Adapts to You',
     metaDescription: 'Learn maths, science, coding and more with an AI teacher that adapts to your age and level. Free personalised learning paths.',
-    keywords:        ['ai tutor', 'personalised learning', 'nudge ai', 'ai teacher', 'learn online', 'kids tutor'],
+    keywords:        ['ai tutor', 'personalised learning', 'tutiq', 'ai teacher', 'learn online', 'kids tutor'],
   },
 
   // Option C — Questly: Live AI Classroom Quiz
