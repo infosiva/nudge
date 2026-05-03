@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle, BookOpen, BrainCircuit, Trophy } from 'lucide-
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
+import AdUnit from '@/components/AdUnit'
 const config = _config as AiToolConfig
 
 const HOW_IT_WORKS = [
@@ -204,6 +205,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── AD UNIT — between features and CTA ── */}
+      <div className="max-w-3xl mx-auto px-6 py-2">
+        <AdUnit format="horizontal" className="min-h-[80px]" />
+      </div>
 
       {/* ── FINAL CTA ───────────────────────────────────────── */}
       <section className="py-24 px-6">
