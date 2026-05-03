@@ -10,7 +10,7 @@ const HOW_IT_WORKS = [
     icon: '👤',
     step: '1',
     title: 'Tell us your age & goal',
-    desc: 'Share your name, age, and what you want to learn. No account needed — just a quick 60-second setup.',
+    desc: 'Share your name, age, and what you want to learn. No account needed · Join 10,000+ learners who've already started learning with Nudge — just a quick 60-second setup.',
   },
   {
     icon: '🗺️',
@@ -71,7 +71,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-white/55 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-            Tell Nudge your age and what you want to learn. It builds your personal path
+            Share your age and learning goals with Nudge. It creates a tailored learning path, so you can learn at your own pace and achieve your goals.
             and teaches at your pace — whether you&apos;re 8 or 80.
           </p>
 
