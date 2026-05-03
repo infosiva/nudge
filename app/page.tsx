@@ -208,7 +208,7 @@ export default function HomePage() {
 
       {/* ── AD UNIT — between features and CTA ── */}
       <div className="max-w-3xl mx-auto px-6 py-2">
-        <AdUnit format="horizontal" className="min-h-[80px]" />
+        <AdUnit size="rectangle" />
       </div>
 
       {/* ── FINAL CTA ───────────────────────────────────────── */}
