@@ -40,6 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="lazyOnload"
           data-cfasync="false"
         />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4237294630161176"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
 
         {/* Dynamic mesh gradient bg — changes per vertical */}
         <div style={meshStyle} />
