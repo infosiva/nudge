@@ -12,8 +12,8 @@ interface AdUnitProps {
 
 // ── Adsterra zone keys — replace with real keys from adsterra.com dashboard ──
 // Until real keys are set, component falls back to affiliate banners automatically
-const ADSTERRA_KEY_BANNER = process.env.NEXT_PUBLIC_ADSTERRA_BANNER_KEY || ''
-const ADSTERRA_KEY_RECT   = process.env.NEXT_PUBLIC_ADSTERRA_RECT_KEY   || ''
+const ADSTERRA_KEY_BANNER = '616210df5989196a6f31b923038493e5'  // 728×90
+const ADSTERRA_KEY_RECT   = '31f3ea0a4afabe0544abe29662a9d947'  // 300×250
 
 // ── Affiliate banners — earn commission immediately, no approval needed ────────
 // Hostinger: $60–$150 per hosting sale (60% commission)
@@ -112,32 +112,42 @@ function AffiliateBanner({ size }: { size: 'banner' | 'rectangle' }) {
   )
 }
 
-export default function AdUnit({ size = 'rectangle', className = '', mode = 'auto' }: AdUnitProps) {
-  const adKey   = size === 'banner' ? ADSTERRA_KEY_BANNER : ADSTERRA_KEY_RECT
-  const width   = size === 'banner' ? 728 : 300
-  const height  = size === 'banner' ? 90  : 250
-  const ref     = useRef<HTMLDivElement>(null)
-  const loaded  = useRef(false)
+// Social Bar — sticky bottom bar, injected once into body
+export function SocialBar() {
+  const loaded = useRef(false)
+  useEffect(() => {
+    if (loaded.current) return
+    loaded.current = true
+    const s = document.createElement('script')
+    s.async = true
+    s.setAttribute('data-cfasync', 'false')
+    s.src = '//pl29337022.profitablecpmratenetwork.com/6d/45/96/6d4596d0970342a88c5a2e5e0f520b06.js'
+    document.body.appendChild(s)
+  }, [])
+  return null
+}
 
-  const useAdsterra = (mode === 'adsterra' || mode === 'auto') && !!adKey
+export default function AdUnit({ size = 'rectangle', className = '' }: AdUnitProps) {
+  const adKey  = size === 'banner' ? ADSTERRA_KEY_BANNER : ADSTERRA_KEY_RECT
+  const width  = size === 'banner' ? 728 : 300
+  const height = size === 'banner' ? 90  : 250
+  const ref    = useRef<HTMLDivElement>(null)
+  const loaded = useRef(false)
 
   useEffect(() => {
-    if (!useAdsterra || loaded.current || !ref.current) return
+    if (loaded.current || !ref.current) return
     loaded.current = true
     const s = document.createElement('script')
     s.type = 'text/javascript'
     s.setAttribute('data-cfasync', 'false')
-    s.text = `(function(){var o={key:'${adKey}',format:'iframe',height:${height},width:${width},params:{}};var s=document.createElement('script');s.type='text/javascript';s.setAttribute('data-cfasync','false');s.src='//epnzryrk.com/act/files/tag.min.js';document.currentScript.parentNode.appendChild(s);window.atOptions=o;})();`
+    s.text = `(function(){var o={key:'${adKey}',format:'iframe',height:${height},width:${width},params:{}};var d=document.createElement('script');d.type='text/javascript';d.setAttribute('data-cfasync','false');d.src='//www.highperformanceformat.com/${adKey}/invoke.js';var c=document.currentScript||document.scripts[document.scripts.length-1];c.parentNode.insertBefore(d,c.nextSibling);window.atOptions=o;})();`
     ref.current.appendChild(s)
-  }, [adKey, height, width, useAdsterra])
+  }, [adKey, height, width])
 
   return (
     <div className={`relative w-full overflow-hidden ${className}`}>
       <div className="text-[9px] text-white/10 text-center mb-0.5 uppercase tracking-widest">Sponsored</div>
-      {useAdsterra
-        ? <div ref={ref} style={{ width, maxWidth: '100%', minHeight: height }} />
-        : <AffiliateBanner size={size} />
-      }
+      <div ref={ref} style={{ width, maxWidth: '100%', minHeight: height }} />
     </div>
   )
 }
