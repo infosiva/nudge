@@ -44,7 +44,9 @@ Rules:
 - No markdown fences, just valid JSON`,
         },
       ],
-      'You are a quiz generator. Output only valid JSON, no markdown, no explanation.'
+      'You are a quiz generator. Output only valid JSON, no markdown, no explanation.',
+      1200,
+      'best',
     )
 
     const cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim()
