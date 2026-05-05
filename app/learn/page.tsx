@@ -6,6 +6,7 @@ import { ArrowRight, Lock, CheckCircle, BookOpen, Loader2 } from 'lucide-react'
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
+import AdUnit from '@/components/AdUnit'
 const config = _config as AiToolConfig
 
 interface Profile {
@@ -217,6 +218,11 @@ export default function LearnPage() {
           <Link href="/onboard" className="block mt-4 text-center text-white/30 hover:text-white/60 text-xs transition-colors">
             Change subject →
           </Link>
+
+          {/* Ad — below sidebar, only visible when learning path is loaded */}
+          <div className="mt-4">
+            <AdUnit size="rectangle" />
+          </div>
         </div>
 
       </div>

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 interface AdUnitProps {
   size?: 'banner' | 'rectangle'
   className?: string
+  slot?: string    // forward-compat with AdSense slot IDs (unused internally)
+  format?: string  // forward-compat (unused internally)
   /** 'affiliate' = rotating affiliate banners (earns now, no approval needed)
    *  'adsterra'  = Adsterra iframe unit (needs real key set below)
    *  'auto'      = affiliate first, placeholder if Adsterra not configured */
