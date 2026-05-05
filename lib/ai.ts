@@ -8,6 +8,10 @@
  *     free-tier capacity. Keys are rotated on quota/rate-limit errors.
  *   - Fallback chain: Groq → Gemini → Cerebras → Anthropic (paid last resort)
  *   - In-memory response cache (1h TTL) via aiCached()
+ *   - Edge Config model router: model tiers are read from Vercel Edge Config at
+ *     runtime — swap models across ALL projects from the Vercel dashboard with
+ *     zero code deploys. Falls back to hardcoded defaults if Edge Config is
+ *     unavailable. Dashboard: vercel.com/dashboard/edge-config/ecfg_s5cumfsw58v5mpe9ahpkb7axmigs
  *
  * Quality routing:
  *   'fast'     → small/instant models  (8b class)   — simple formatting, classification
@@ -32,29 +36,74 @@ export type Quality = 'fast' | 'balanced' | 'best'
 type Msg = { role: 'user' | 'assistant'; content: string }
 export interface AIResponse { text: string; provider: string; model: string }
 
-// ── Model tiers per provider ──────────────────────────────────────────────────
-const GROQ_TIERS: Record<Quality, string[]> = {
+// ── Hardcoded defaults (used when Edge Config is unavailable) ─────────────────
+const DEFAULT_GROQ_TIERS: Record<Quality, string[]> = {
   fast:     ['llama-3.1-8b-instant'],
   balanced: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
   best:     ['meta-llama/llama-4-scout-17b-16e-instruct', 'qwen/qwen3-32b', 'llama-3.3-70b-versatile'],
 }
 
-const GEMINI_TIERS: Record<Quality, string[]> = {
+const DEFAULT_GEMINI_TIERS: Record<Quality, string[]> = {
   fast:     ['gemini-2.0-flash-lite'],
   balanced: ['gemini-2.0-flash', 'gemini-2.0-flash-lite'],
   best:     ['gemini-2.5-flash', 'gemini-2.0-flash'],
 }
 
-const CEREBRAS_TIERS: Record<Quality, string[]> = {
+const DEFAULT_CEREBRAS_TIERS: Record<Quality, string[]> = {
   fast:     ['llama3.1-8b'],
   balanced: ['gpt-oss-120b', 'llama3.1-8b'],
   best:     ['qwen-3-235b-a22b-instruct-2507', 'gpt-oss-120b'],
 }
 
-const CLAUDE_TIERS: Record<Quality, string> = {
+const DEFAULT_CLAUDE_TIERS: Record<Quality, string> = {
   fast:     'claude-haiku-4-5-20251001',
   balanced: 'claude-haiku-4-5-20251001',
   best:     'claude-sonnet-4-6',
+}
+
+// ── Edge Config model router ──────────────────────────────────────────────────
+// Cached in-process so we only fetch once per cold start
+let _edgeConfig: {
+  groq_tiers?: Record<Quality, string[]>
+  gemini_tiers?: Record<Quality, string[]>
+  cerebras_tiers?: Record<Quality, string[]>
+  claude_tiers?: Record<Quality, string>
+  fallback_order?: string[]
+} | null = null
+
+async function getEdgeConfig() {
+  if (_edgeConfig !== null) return _edgeConfig
+  const connStr = process.env.EDGE_CONFIG
+  if (!connStr) { _edgeConfig = {}; return _edgeConfig }
+  try {
+    // Parse the connection string: https://edge-config.vercel.com/ecfg_xxx?token=yyy
+    const url = new URL(connStr)
+    const ecId = url.pathname.replace('/', '')
+    const token = url.searchParams.get('token')
+    const res = await fetch(
+      `https://api.vercel.com/v1/edge-config/${ecId}/items`,
+      { headers: { Authorization: `Bearer ${token}` }, next: { revalidate: 300 } } as RequestInit,
+    )
+    if (!res.ok) { _edgeConfig = {}; return _edgeConfig }
+    const items: Array<{ key: string; value: unknown }> = await res.json()
+    const cfg: Record<string, unknown> = {}
+    for (const { key, value } of items) cfg[key] = value
+    _edgeConfig = cfg as typeof _edgeConfig
+    console.log('[AI] Loaded model tiers from Edge Config')
+  } catch {
+    _edgeConfig = {}
+  }
+  return _edgeConfig
+}
+
+async function getTiers() {
+  const ec = await getEdgeConfig()
+  return {
+    groq:     (ec?.groq_tiers     ?? DEFAULT_GROQ_TIERS)     as Record<Quality, string[]>,
+    gemini:   (ec?.gemini_tiers   ?? DEFAULT_GEMINI_TIERS)   as Record<Quality, string[]>,
+    cerebras: (ec?.cerebras_tiers ?? DEFAULT_CEREBRAS_TIERS) as Record<Quality, string[]>,
+    claude:   (ec?.claude_tiers   ?? DEFAULT_CLAUDE_TIERS)   as Record<Quality, string>,
+  }
 }
 
 // ── Key rotation helper ───────────────────────────────────────────────────────
@@ -149,7 +198,8 @@ async function callAnthropic(
 ): Promise<{ text: string; model: string }> {
   const key = getKeys('ANTHROPIC')[0]
   if (!key) throw new Error('ANTHROPIC not configured')
-  const model = CLAUDE_TIERS[quality]
+  const tiers = await getTiers()
+  const model = tiers.claude[quality]
   const { default: Anthropic } = await import('@anthropic-ai/sdk')
   const client = new Anthropic({ apiKey: key })
   const res = await withTimeout(
@@ -166,10 +216,11 @@ export async function callAI(
   maxTokens = 1024,
   quality: Quality = 'balanced',
 ): Promise<AIResponse> {
+  const tiers = await getTiers()
   const providers = [
-    { name: 'groq',      fn: () => callProvider('https://api.groq.com/openai/v1',                          'Groq',     'GROQ',     GROQ_TIERS[quality],     system, messages, maxTokens) },
-    { name: 'gemini',    fn: () => callProvider('https://generativelanguage.googleapis.com/v1beta/openai', 'Gemini',   'GEMINI',   GEMINI_TIERS[quality],   system, messages, maxTokens) },
-    { name: 'cerebras',  fn: () => callProvider('https://api.cerebras.ai/v1',                              'Cerebras', 'CEREBRAS', CEREBRAS_TIERS[quality], system, messages, maxTokens) },
+    { name: 'groq',      fn: () => callProvider('https://api.groq.com/openai/v1',                          'Groq',     'GROQ',     tiers.groq[quality],     system, messages, maxTokens) },
+    { name: 'gemini',    fn: () => callProvider('https://generativelanguage.googleapis.com/v1beta/openai', 'Gemini',   'GEMINI',   tiers.gemini[quality],   system, messages, maxTokens) },
+    { name: 'cerebras',  fn: () => callProvider('https://api.cerebras.ai/v1',                              'Cerebras', 'CEREBRAS', tiers.cerebras[quality], system, messages, maxTokens) },
     { name: 'anthropic', fn: () => callAnthropic(quality, system, messages, maxTokens) },
   ]
 
