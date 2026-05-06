@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title:       config.metaTitle,
-  description: 'Discover Nudge, the AI-powered learning platform that adapts to your age and level. Learn new skills and subjects with personalized paths and quizzes.',
+  description: 'Nudge: AI-powered learning for all ages. Personalized paths, quizzes & skills training. Learn at your own pace, no account needed.',
   keywords:    config.keywords,
 }
 

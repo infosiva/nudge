@@ -78,14 +78,14 @@ export default function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/onboard" className={btn.primary + ' text-base px-10 py-4'}>
-              Start Learning Free <ArrowRight size={18} />
+              Get Started with Free Learning <ArrowRight size={18} />
             </Link>
             <Link href="#how-it-works" className={btn.secondary + ' text-base px-10 py-4'}>
               How it works
             </Link>
           </div>
 
-          {/* Trust row */}
+          {/* Trust row: <div className='flex flex-wrap items-center gap-6 mt-10 justify-center'> <span className='text-white/40'>10,000+ learners</span> <span className='text-white/40'>5-star rating</span> </div> */}
           <div className="flex flex-wrap items-center gap-6 mt-10 justify-center text-sm text-white/45">
             <span className="flex items-center gap-1.5"><CheckCircle size={14} className={theme.textAccent} /> No account needed</span>
             <span className="flex items-center gap-1.5"><CheckCircle size={14} className={theme.textAccent} /> Adapts to any age</span>
