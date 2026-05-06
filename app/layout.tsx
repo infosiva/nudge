@@ -5,7 +5,6 @@ import './globals.css'
 import config from '@/vertical.config'
 import { getMeshStyle, getScrollbarColor, COLOR_MAP } from '@/lib/themeColors'
 import Navbar from '@/components/Navbar'
-import { SocialBar } from '@/components/AdUnit'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,11 +36,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ background: colors.base }}
       >
         <Script
-          src="https://epnzryrk.com/act/files/tag.min.js"
-          strategy="lazyOnload"
-          data-cfasync="false"
-        />
-        <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4237294630161176"
           crossOrigin="anonymous"
@@ -51,7 +45,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Dynamic mesh gradient bg — changes per vertical */}
         <div style={meshStyle} />
 
-        <SocialBar />
         <Navbar />
 
         <main className="flex-1">
