@@ -3,45 +3,69 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import config from '@/vertical.config'
-import { btn, theme } from '@/lib/theme'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <nav className="sticky top-0 z-50 glass-strong border-b border-white/[0.06]">
+    <nav className="sticky top-0 z-50 backdrop-blur-md border-b border-white/[0.05]"
+      style={{ background: 'rgba(15,14,12,0.80)' }}>
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <span className="text-2xl">🌱</span>
-          <span className={`${theme.gradientText} font-extrabold tracking-tight`}>
-            {config.name}
-          </span>
+
+        {/* Logo — warm editorial: book emoji + brand + subtitle */}
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="text-xl leading-none">📖</span>
+          <div>
+            <span className="font-bold text-lg text-white leading-none block tracking-tight">{config.name}</span>
+            <span className="text-[10px] font-medium leading-none block" style={{ color: 'rgba(245,158,11,0.60)' }}>AI Tutor</span>
+          </div>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
-          <Link href="/#subjects"      className="hover:text-white transition-colors">Subjects</Link>
-          <Link href="/#how-it-works"  className="hover:text-white transition-colors">How it works</Link>
+        {/* Desktop nav — clean text links with amber hover underline */}
+        <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
+          <Link href="/#subjects"
+            className="relative hover:text-amber-300 transition-colors group">
+            Subjects
+            <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-amber-400/70" />
+          </Link>
+          <Link href="/#how-it-works"
+            className="relative hover:text-amber-300 transition-colors group">
+            How it works
+            <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-amber-400/70" />
+          </Link>
+          <Link href="/learn"
+            className="relative hover:text-amber-300 transition-colors group">
+            My Learning
+            <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-amber-400/70" />
+          </Link>
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link href="/onboard" className={btn.primary}>Start Learning Free</Link>
+        {/* CTA — warm amber button */}
+        <div className="hidden md:flex items-center">
+          <Link href="/onboard"
+            className="rounded-lg px-5 py-2 text-sm font-semibold text-stone-900 transition-all hover:brightness-110 hover:scale-105"
+            style={{ background: '#f59e0b' }}>
+            Start Free
+          </Link>
         </div>
 
-        {/* Mobile toggle */}
         <button className="md:hidden p-2 text-white/60 hover:text-white" onClick={() => setOpen(!open)}>
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-white/[0.06] px-6 py-4 flex flex-col gap-4 text-sm">
-          <Link href="/#subjects"     className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>Subjects</Link>
-          <Link href="/#how-it-works" className="text-white/70 hover:text-white" onClick={() => setOpen(false)}>How it works</Link>
-          <Link href="/onboard"       className={btn.primary}                    onClick={() => setOpen(false)}>Start Learning Free</Link>
+        <div className="md:hidden border-t border-white/[0.05] px-6 py-5 flex flex-col gap-4 text-sm"
+          style={{ background: 'rgba(15,14,12,0.97)' }}>
+          <Link href="/#subjects" className="text-white/70 hover:text-amber-300 transition-colors" onClick={() => setOpen(false)}>Subjects</Link>
+          <Link href="/#how-it-works" className="text-white/70 hover:text-amber-300 transition-colors" onClick={() => setOpen(false)}>How it works</Link>
+          <Link href="/learn" className="text-white/70 hover:text-amber-300 transition-colors" onClick={() => setOpen(false)}>My Learning</Link>
+          <Link href="/onboard"
+            className="text-center rounded-lg py-2.5 font-semibold text-stone-900"
+            style={{ background: '#f59e0b' }}
+            onClick={() => setOpen(false)}>
+            Start Learning Free
+          </Link>
         </div>
       )}
     </nav>
