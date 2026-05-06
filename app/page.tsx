@@ -72,13 +72,13 @@ export default function HomePage() {
           </h1>
 
           <p className="text-white/55 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-            Share your age and learning goals with Nudge. It creates a tailored learning path, so you can learn at your own pace and achieve your goals.
+            Join 10,000+ learners who've already started learning with Nudge. Share your age and learning goals, and get a tailored learning path to achieve your goals.
             and teaches at your pace — whether you&apos;re 8 or 80.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/onboard" className={btn.primary + ' text-base px-10 py-4'}>
-              Get Started with Free Learning <ArrowRight size={18} />
+              Start Learning Now <ArrowRight size={18} />
             </Link>
             <Link href="#how-it-works" className={btn.secondary + ' text-base px-10 py-4'}>
               How it works
