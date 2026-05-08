@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { isLoggedIn } from './useMagicAuth'
 
 function getApiUrl(): string {
@@ -27,7 +27,6 @@ async function serverTrack(product: string, action: string): Promise<number> {
     const data = await res.json()
     return data.count ?? 1
   } catch {
-    // Fallback to localStorage count if API unreachable
     const key = `${product}_${action}_count`
     const next = (parseInt(localStorage.getItem(key) || '0', 10)) + 1
     localStorage.setItem(key, String(next))
@@ -48,10 +47,12 @@ async function serverGetCount(product: string, action: string): Promise<number> 
 }
 
 export function useGate(product: string, freeLimit: number, action = 'session') {
-  const [count, setCount]           = useState(0)
+  const [count, setCount]               = useState(0)
   const [isRegistered, setIsRegistered] = useState(false)
-  const [showGate, setShowGate]     = useState(false)
-  const [ready, setReady]           = useState(false)
+  const [showGate, setShowGate]         = useState(false)
+  const [ready, setReady]               = useState(false)
+  // Keep a ref so increment() can check without stale closure
+  const countRef = useRef(0)
 
   useEffect(() => {
     const registered = isLoggedIn()
@@ -59,22 +60,44 @@ export function useGate(product: string, freeLimit: number, action = 'session') 
     if (!registered) {
       serverGetCount(product, action).then(c => {
         setCount(c)
+        countRef.current = c
+        // If they already hit the limit (e.g. returning visitor), show gate immediately
+        if (c >= freeLimit) setShowGate(true)
         setReady(true)
       })
     } else {
       setReady(true)
     }
-  }, [product, action])
+  }, [product, action, freeLimit])
 
+  /** Call BEFORE the action. Returns true = allowed, false = blocked (gate shown). */
   const increment = async (): Promise<boolean> => {
-    if (isRegistered) return true // always allowed for registered users
+    if (isRegistered) return true
     const next = await serverTrack(product, action)
     setCount(next)
-    if (next >= freeLimit) {
+    countRef.current = next
+    if (next > freeLimit) {
+      // Already over — show gate, block
       setShowGate(true)
-      return false // blocked
+      return false
     }
-    return true // allowed
+    if (next === freeLimit) {
+      // Used the last free one — show gate after this action completes
+      // We still ALLOW this action (returns true) so UX feels generous
+      // Gate fires at next attempt
+      return true
+    }
+    return true
+  }
+
+  /** Call BEFORE the action when you want hard-block at freeLimit (not freeLimit+1). */
+  const check = (): boolean => {
+    if (isRegistered) return true
+    if (countRef.current >= freeLimit) {
+      setShowGate(true)
+      return false
+    }
+    return true
   }
 
   const onRegistered = () => {
@@ -82,9 +105,7 @@ export function useGate(product: string, freeLimit: number, action = 'session') 
     setShowGate(false)
   }
 
-  const dismissGate = () => {
-    setShowGate(false)
-  }
+  const dismissGate = () => setShowGate(false)
 
-  return { count, isRegistered, showGate, increment, onRegistered, dismissGate, ready }
+  return { count, isRegistered, showGate, increment, check, onRegistered, dismissGate, ready }
 }

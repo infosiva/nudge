@@ -156,15 +156,15 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
     }
   }
 
-  function markComplete() {
+  async function markComplete() {
     if (!profile) return
     const doneKey = `nudge_done_${profile.subject}`
     const raw = localStorage.getItem(doneKey)
     const done: string[] = raw ? JSON.parse(raw) : []
     if (!done.includes(topicId)) done.push(topicId)
     localStorage.setItem(doneKey, JSON.stringify(done))
-    gateIncrement()
-    if (!showGate) router.push('/learn')
+    const allowed = await gateIncrement()
+    if (allowed) router.push('/learn')
   }
 
   const q = questions[qIndex]
