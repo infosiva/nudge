@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight, CheckCircle, Loader2, RotateCcw } from 'lucide-r
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
+import { useGate } from '@/lib/shared/useGate'
+import RegisterGate from '@/lib/shared/RegisterGate'
 const config = _config as AiToolConfig
 
 interface Profile {
@@ -66,6 +68,8 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
   const [explanation, setExplanation] = useState('')
   const [loadingExplain, setLoadingExplain] = useState(true)
   const [explainError, setExplainError]     = useState('')
+
+  const { count: gateCount, showGate, increment: gateIncrement, onRegistered, dismissGate } = useGate('tutiq', 3)
 
   // Quiz state
   const [showQuiz, setShowQuiz]       = useState(false)
@@ -159,7 +163,8 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
     const done: string[] = raw ? JSON.parse(raw) : []
     if (!done.includes(topicId)) done.push(topicId)
     localStorage.setItem(doneKey, JSON.stringify(done))
-    router.push('/learn')
+    gateIncrement()
+    if (!showGate) router.push('/learn')
   }
 
   const q = questions[qIndex]
@@ -205,6 +210,19 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
             </button>
           )}
         </>
+      )}
+
+      {showGate && (
+        <RegisterGate
+          freeUsed={gateCount}
+          freeLimit={3}
+          freeFeature="learning sessions"
+          lockedFeature="full learning paths & progress tracking"
+          accentColor="#059669"
+          site="tutiq"
+          onSuccess={(user) => { onRegistered(); router.push('/learn') }}
+          onDismiss={dismissGate}
+        />
       )}
 
       {/* ── QUIZ ─────────────────────────────────────────────── */}
