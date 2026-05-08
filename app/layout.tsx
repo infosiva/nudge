@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Script from 'next/script'
 import './globals.css'
 import config from '@/vertical.config'
 import { getMeshStyle, getScrollbarColor, COLOR_MAP } from '@/lib/themeColors'
@@ -41,11 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Dynamic mesh gradient bg — changes per vertical */}
         <div style={meshStyle} />
 
-        <Script
-          src="http://31.97.56.148:3098/t.js"
-          data-site="tutiq.app"
-          strategy="lazyOnload"
-        />
         <Navbar />
 
         <Providers>

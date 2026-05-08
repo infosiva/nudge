@@ -39,10 +39,12 @@ function OnboardInner() {
   // If subject pre-selected from URL, jump straight to step 2 after name/age
   const totalSteps = 4
 
+  const isUnder13 = typeof age === 'number' && age >= 5 && age < 13
+
   function validateStep1() {
     const e: Record<string, string> = {}
-    if (!name.trim())             e.name = 'Please enter your name'
-    if (!age || age < 5 || age > 80) e.age = 'Please enter an age between 5 and 80'
+    if (!name.trim())                  e.name = 'Please enter your name'
+    if (!age || age < 5 || age > 80)   e.age  = 'Please enter an age between 5 and 80'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -54,8 +56,12 @@ function OnboardInner() {
     return Object.keys(e).length === 0
   }
 
+  const [parentalBlocked, setParentalBlocked] = useState(false)
+
   function next() {
     if (step === 1 && !validateStep1()) return
+    // Under-13: show parental notice, do not advance to account creation
+    if (step === 1 && isUnder13) { setParentalBlocked(true); return }
     if (step === 2 && !validateStep2()) return
     setErrors({})
     setStep(s => Math.min(s + 1, totalSteps))
@@ -98,8 +104,41 @@ function OnboardInner() {
           </div>
         </div>
 
+        {/* Under-13 parental gate */}
+        {parentalBlocked && (
+          <div className={`${theme.card} p-8 md:p-10 text-center`}>
+            <div className="text-5xl mb-4">👨‍👩‍👧</div>
+            <h2 className="text-xl font-extrabold text-white mb-3">Ask a parent or guardian to help</h2>
+            <p className="text-white/60 text-sm leading-relaxed mb-6">
+              Tutiq is designed for learners of all ages. For users under 13, we need a parent or guardian to set up the account to keep your learning safe.
+            </p>
+            <div className={`rounded-xl p-5 mb-6 text-left text-sm text-white/70 space-y-2`}
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="font-semibold text-white/90">For parents:</p>
+              <p>• Tutiq does not collect personal data from children under 13 without parental consent.</p>
+              <p>• No ads are shown on this platform.</p>
+              <p>• Learning progress is stored only on this device (no account required to start).</p>
+              <p>• To create an account, a parent should complete the sign-up using their own email.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => { setParentalBlocked(false); finish() }}
+                className={`${btn.primary} px-6 py-3`}
+              >
+                Continue without account (device only)
+              </button>
+              <button
+                onClick={() => setParentalBlocked(false)}
+                className={`${btn.secondary} px-6 py-3`}
+              >
+                Go back
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Card */}
-        <div className={`${theme.card} p-8 md:p-10`}>
+        {!parentalBlocked && <div className={`${theme.card} p-8 md:p-10`}>
 
           {/* ── Step 1: Name + Age ── */}
           {step === 1 && (
@@ -242,7 +281,7 @@ function OnboardInner() {
               </button>
             )}
           </div>
-        </div>
+        </div>}
 
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import config from '@/vertical.config'
 import { useMagicAuth } from '@/lib/shared/useMagicAuth'
@@ -10,6 +10,15 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const { user, logout, onSuccess } = useMagicAuth()
+
+  // Hide sign-in for under-13 users (COPPA/GDPR-K — no email collection from children)
+  const [isUnder13, setIsUnder13] = useState(false)
+  useEffect(() => {
+    try {
+      const profile = JSON.parse(localStorage.getItem('nudge_profile') ?? '{}')
+      if (typeof profile.age === 'number' && profile.age < 13) setIsUnder13(true)
+    } catch { /* ignore */ }
+  }, [])
 
   return (
     <>
@@ -52,13 +61,13 @@ export default function Navbar() {
                 <span className="text-sm text-white/60">Hi, {user.username || user.email.split('@')[0]}</span>
                 <button onClick={logout} className="text-xs text-white/40 hover:text-amber-300 transition-colors border border-white/10 rounded-lg px-3 py-1.5">Sign out</button>
               </>
-            ) : (
+            ) : !isUnder13 ? (
               <button onClick={() => setAuthOpen(true)}
                 className="rounded-lg px-5 py-2 text-sm font-semibold transition-all hover:brightness-110 hover:scale-105"
                 style={{ background: '#f59e0b', color: '#1c1917' }}>
                 Sign in free
               </button>
-            )}
+            ) : null}
             <Link href="/onboard"
               className="rounded-lg px-5 py-2 text-sm font-semibold text-stone-900 transition-all hover:brightness-110 hover:scale-105"
               style={{ background: '#f59e0b' }}>
@@ -82,13 +91,13 @@ export default function Navbar() {
                 <span className="text-center text-white/40 text-xs">Signed in as {user.email}</span>
                 <button onClick={() => { logout(); setOpen(false) }} className="text-center rounded-lg py-2.5 text-white/50 border border-white/10">Sign out</button>
               </>
-            ) : (
+            ) : !isUnder13 ? (
               <button onClick={() => { setAuthOpen(true); setOpen(false) }}
                 className="text-center rounded-lg py-2.5 font-semibold"
                 style={{ background: '#f59e0b', color: '#1c1917' }}>
                 Sign in free
               </button>
-            )}
+            ) : null}
             <Link href="/onboard"
               className="text-center rounded-lg py-2.5 font-semibold text-stone-900"
               style={{ background: '#f59e0b' }}
