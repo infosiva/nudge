@@ -7,6 +7,7 @@ import { getMeshStyle, getScrollbarColor, COLOR_MAP } from '@/lib/themeColors'
 import Navbar from '@/components/Navbar'
 import FooterExtras from '@/components/FooterExtras'
 import ChatBot from '@/components/ChatBot'
+import Providers from '@/components/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,13 +38,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} min-h-full flex flex-col text-white`}
         style={{ background: colors.base }}
       >
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4237294630161176"
-          crossOrigin="anonymous"
-          strategy="lazyOnload"
-        />
-
         {/* Dynamic mesh gradient bg — changes per vertical */}
         <div style={meshStyle} />
 
@@ -54,9 +48,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <Navbar />
 
-        <main className="flex-1">
-          {children}
-        </main>
+        <Providers>
+          <main className="flex-1">
+            {children}
+          </main>
+        </Providers>
 
         <ChatBot />
 

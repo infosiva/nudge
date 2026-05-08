@@ -3,7 +3,6 @@ import { ArrowRight, CheckCircle, BrainCircuit, BookOpen, Layers } from 'lucide-
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
-import AdUnit from '@/components/AdUnit'
 const config = _config as AiToolConfig
 
 const HOW_IT_WORKS = [
@@ -273,10 +272,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── AD — bottom of page ── */}
-      <div className="max-w-5xl mx-auto px-6 py-6">
-        <AdUnit slot="homepage-bottom" format="banner" />
-      </div>
+
     </div>
   )
 }
