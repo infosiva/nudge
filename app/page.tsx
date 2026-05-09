@@ -1,168 +1,254 @@
-import Link from 'next/link'
-import { ArrowRight, CheckCircle, BrainCircuit, BookOpen, Layers } from 'lucide-react'
-import _config from '@/vertical.config'
-import type { AiToolConfig } from '@/vertical.config'
-import { theme, btn } from '@/lib/theme'
-const config = _config as AiToolConfig
+'use client'
 
-const HOW_IT_WORKS = [
-  {
-    icon: '👤',
-    step: '1',
-    title: 'Tell us your age & goal',
-    desc: 'Share your name, age, and what you want to learn. No account needed — 60-second setup.',
-  },
-  {
-    icon: '🗺️',
-    step: '2',
-    title: 'AI builds your learning path',
-    desc: 'Tutiq creates a personalised sequence of topics tuned to your age and level.',
-  },
-  {
-    icon: '✅',
-    step: '3',
-    title: 'Learn topic by topic, quiz after each',
-    desc: 'Bite-sized lessons at your own pace. A quick quiz after each topic locks the knowledge in.',
-  },
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { ArrowRight, CheckCircle, BookOpen, Layers, Zap, Star, Lock, BarChart2, FileText, GraduationCap, Trophy, Users, Clock } from 'lucide-react'
+
+// ── Subject cards ─────────────────────────────────────────────
+const SUBJECTS = [
+  { id: 'math',     label: 'Math',      icon: '📐', desc: 'Algebra, calculus, geometry & more', color: 'from-emerald-500/20 to-teal-500/10', border: 'hover:border-emerald-400/50', glow: 'hover:shadow-emerald-500/20' },
+  { id: 'science',  label: 'Science',   icon: '🔬', desc: 'Physics, chemistry & biology',       color: 'from-teal-500/20 to-cyan-500/10',    border: 'hover:border-teal-400/50',    glow: 'hover:shadow-teal-500/20' },
+  { id: 'history',  label: 'History',   icon: '🏛️', desc: 'World events, civilisations & more', color: 'from-amber-500/10 to-emerald-500/10', border: 'hover:border-amber-400/50',  glow: 'hover:shadow-amber-500/10' },
+  { id: 'language', label: 'Languages', icon: '🌐', desc: 'English, Spanish, French & more',    color: 'from-emerald-600/15 to-green-500/10', border: 'hover:border-green-400/50',  glow: 'hover:shadow-green-500/15' },
+  { id: 'coding',   label: 'Coding',    icon: '💻', desc: 'Python, JS, web dev & algorithms',   color: 'from-cyan-500/20 to-emerald-500/10', border: 'hover:border-cyan-400/50',   glow: 'hover:shadow-cyan-500/20' },
 ]
 
-const AGE_GROUPS = [
-  {
-    label: 'Kids',
-    emoji: '🧒',
-    age: 'Ages 5 – 12',
-    desc: 'Simple words, colourful examples, short lessons. Tutiq speaks their language.',
-    color: 'border-emerald-500/30 bg-emerald-500/5',
-    accent: 'text-emerald-300',
-  },
-  {
-    label: 'Teens',
-    emoji: '🧑',
-    age: 'Ages 13 – 17',
-    desc: 'Engaging, relatable, never preachy. Real-world connections keep teens curious.',
-    color: 'border-cyan-500/30 bg-cyan-500/5',
-    accent: 'text-cyan-300',
-  },
-  {
-    label: 'Adults',
-    emoji: '🧑‍💼',
-    age: 'Ages 18+',
-    desc: 'Concise and professional. Skips basics you already know, goes to what matters.',
-    color: 'border-violet-500/30 bg-violet-500/5',
-    accent: 'text-violet-300',
-  },
+// ── Chat mockup steps ─────────────────────────────────────────
+const CHAT = [
+  { role: 'tutor', text: 'Great! Let\'s tackle quadratic equations. Do you know ax² + bx + c = 0?' },
+  { role: 'user',  text: 'I\'ve seen it but I\'m not sure how to apply it.' },
+  { role: 'tutor', text: 'Think of it like finding where a parabola crosses zero. We use: x = (−b ± √(b²−4ac)) / 2a. Let\'s solve one together — step by step! 🎯' },
+]
+
+// ── PRO features ──────────────────────────────────────────────
+const PRO_FEATURES = [
+  { icon: Zap,       label: 'Unlimited sessions',   desc: 'Learn as much as you want, every day' },
+  { icon: BookOpen,  label: 'All subjects unlocked', desc: 'Math, Science, History, Languages, Coding + more' },
+  { icon: BarChart2, label: 'Progress tracking',     desc: 'See your improvement over time with charts' },
+  { icon: FileText,  label: 'PDF study guides',      desc: 'Download summaries for every topic you cover' },
+]
+
+// ── Testimonials ──────────────────────────────────────────────
+const TESTIMONIALS = [
+  { name: 'Priya S.', role: 'Grade 10 Student', text: 'My maths grade went from C to A in 6 weeks. The step-by-step explanations are incredible!', stars: 5 },
+  { name: 'James T.', role: 'Parent', text: 'My son finally understands physics. It\'s like having a patient tutor on demand 24/7.', stars: 5 },
+  { name: 'Aisha K.', role: 'College Freshman', text: 'Used Tutiq to catch up on chemistry before exams. Passed with distinction!', stars: 5 },
 ]
 
 export default function HomePage() {
-  const subjects = config.subjects.slice(0, 8)
+  const [isPro, setIsPro]                   = useState(false)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [upgraded, setUpgraded]             = useState(false)
+  const [chatStep, setChatStep]             = useState(0)
+
+  useEffect(() => {
+    if (localStorage.getItem('tutiq-pro') === '1') setIsPro(true)
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('upgraded') === '1') {
+      localStorage.setItem('tutiq-pro', '1')
+      setIsPro(true)
+      setUpgraded(true)
+    }
+  }, [])
+
+  // Animate chat messages one by one
+  useEffect(() => {
+    if (chatStep >= CHAT.length) return
+    const t = setTimeout(() => setChatStep(s => s + 1), chatStep === 0 ? 600 : 1400)
+    return () => clearTimeout(t)
+  }, [chatStep])
+
+  async function handleUpgrade() {
+    setCheckoutLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+    } catch {
+      alert('Something went wrong. Please try again.')
+    } finally {
+      setCheckoutLoading(false)
+    }
+  }
 
   return (
     <div className="overflow-hidden">
 
-      {/* ── HERO — Warm Editorial Learning ──────────────────── */}
-      <section className="relative px-6 pt-14 pb-20 overflow-hidden">
-        {/* Subtle warm radial glow top-right */}
-        <div className="absolute top-0 right-0 w-[500px] h-[400px] rounded-full opacity-[0.12] blur-3xl -z-10"
-          style={{ background: 'radial-gradient(ellipse at top right, #f59e0b 0%, transparent 70%)' }} />
+      {/* ── Upgraded toast ──────────────────────────────────── */}
+      {upgraded && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-300 backdrop-blur-md shadow-lg shadow-emerald-500/10">
+          <CheckCircle size={16} /> Welcome to Tutiq Pro! All features unlocked.
+        </div>
+      )}
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      {/* ── HERO ────────────────────────────────────────────── */}
+      <section className="relative px-6 pt-16 pb-24 overflow-hidden">
+        {/* Background geometric shapes — emerald/teal soft glow */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          {/* Large emerald blob top-left */}
+          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full opacity-[0.10] blur-3xl"
+            style={{ background: 'radial-gradient(ellipse, #10b981 0%, transparent 65%)' }} />
+          {/* Teal blob top-right */}
+          <div className="absolute -top-10 right-0 w-[420px] h-[380px] rounded-full opacity-[0.08] blur-3xl"
+            style={{ background: 'radial-gradient(ellipse, #14b8a6 0%, transparent 70%)' }} />
+          {/* Deep forest blob bottom */}
+          <div className="absolute -bottom-20 left-1/3 w-[500px] h-[300px] rounded-full opacity-[0.06] blur-3xl"
+            style={{ background: 'radial-gradient(ellipse, #064e3b 0%, transparent 70%)' }} />
 
-          {/* Left: editorial headline + trust */}
+          {/* Floating hexagons */}
+          <svg className="absolute top-16 right-20 opacity-[0.08] float" width="140" height="161" viewBox="0 0 140 161">
+            <polygon points="70,4 134,38 134,123 70,157 6,123 6,38" fill="none" stroke="#10b981" strokeWidth="1.5"/>
+          </svg>
+          <svg className="absolute top-64 right-1/4 opacity-[0.05]" style={{ animation: 'float 7s ease-in-out infinite 2s' }} width="60" height="69" viewBox="0 0 60 69">
+            <polygon points="30,3 57,18 57,51 30,66 3,51 3,18" fill="#10b981" fillOpacity="0.15" stroke="#10b981" strokeWidth="1"/>
+          </svg>
+          <svg className="absolute bottom-16 left-14 opacity-[0.06]" style={{ animation: 'float 6s ease-in-out infinite 1s' }} width="90" height="104" viewBox="0 0 90 104">
+            <polygon points="45,4 87,27 87,77 45,100 3,77 3,27" fill="none" stroke="#14b8a6" strokeWidth="1.5"/>
+          </svg>
+
+          {/* Triangles */}
+          <svg className="absolute top-32 left-1/4 opacity-[0.05]" style={{ animation: 'float 8s ease-in-out infinite 3s' }} width="60" height="52" viewBox="0 0 60 52">
+            <polygon points="30,2 58,50 2,50" fill="none" stroke="#6ee7b7" strokeWidth="1.2"/>
+          </svg>
+          <svg className="absolute bottom-32 right-1/3 opacity-[0.04]" style={{ animation: 'float 5s ease-in-out infinite 0.5s' }} width="44" height="38" viewBox="0 0 44 38">
+            <polygon points="22,2 42,36 2,36" fill="none" stroke="#10b981" strokeWidth="1"/>
+          </svg>
+
+          {/* Soft dots */}
+          <div className="absolute top-44 left-1/3 w-2.5 h-2.5 rounded-full bg-emerald-400/25" />
+          <div className="absolute top-80 right-1/3 w-2 h-2 rounded-full bg-teal-400/25" />
+          <div className="absolute bottom-28 right-1/4 w-4 h-4 rounded-full border border-emerald-500/20" />
+          <div className="absolute top-56 right-16 w-1.5 h-1.5 rounded-full bg-emerald-300/30" />
+
+          {/* Grid lines — subtle */}
+          <div className="absolute inset-0 opacity-[0.015]"
+            style={{ backgroundImage: 'linear-gradient(rgba(16,185,129,1) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,1) 1px, transparent 1px)', backgroundSize: '80px 80px' }} />
+        </div>
+
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+
+          {/* Left: headline + CTA */}
           <div className="fade-up">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold mb-7"
-              style={{ borderColor: 'rgba(245,158,11,0.25)', background: 'rgba(245,158,11,0.08)', color: 'rgba(253,230,138,0.85)' }}>
-              📚 Personalised for any age
+            {/* Social proof badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold mb-7"
+              style={{ borderColor: 'rgba(16,185,129,0.30)', background: 'rgba(16,185,129,0.08)', color: 'rgba(110,231,183,0.90)' }}>
+              <Star size={11} fill="currentColor" />
+              <span>Helped 5,000+ students improve their grades</span>
             </div>
 
-            {/* Headline — warm editorial, mix of white + amber gradient */}
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
-              <span className="text-white block">Learn smarter,</span>
+            {/* Headline */}
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-5">
+              <span className="text-white/90 block">Your personal AI tutor,</span>
               <span className="block"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #fde68a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                not harder.
+                style={{ background: 'linear-gradient(135deg, #10b981 0%, #6ee7b7 50%, #14b8a6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                available 24/7
               </span>
+              <span className="text-white/70 text-4xl md:text-5xl block mt-2 leading-snug">— master any subject.</span>
             </h1>
 
             <p className="text-white/50 text-base md:text-lg leading-relaxed mb-8 max-w-md">
-              Tutiq builds a personalised AI learning path that adapts to your age, level, and pace — whether you&apos;re 8 or 80.
+              One-on-one AI tutoring that adapts to your level and explains concepts step by step — like having a brilliant, patient teacher available whenever you need one.
             </p>
 
-            {/* Trust pills row */}
-            <div className="flex flex-wrap gap-2 mb-8">
-              {['No sign-up', 'Any age'].map(t => (
-                <span key={t} className="rounded-full border px-4 py-1 text-sm font-medium"
-                  style={{ borderColor: 'rgba(245,158,11,0.25)', color: 'rgba(253,230,138,0.70)', background: 'rgba(245,158,11,0.07)' }}>
+            {/* Trust pills */}
+            <div className="flex flex-wrap gap-2 mb-9">
+              {['No sign-up needed', 'Any age', 'Any subject', 'Khan Academy style'].map(t => (
+                <span key={t} className="rounded-full border px-3.5 py-1 text-xs font-medium"
+                  style={{ borderColor: 'rgba(16,185,129,0.22)', color: 'rgba(110,231,183,0.70)', background: 'rgba(16,185,129,0.06)' }}>
                   · {t}
                 </span>
               ))}
             </div>
 
-            {/* CTA */}
-            <Link href="/onboard"
-              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-semibold text-stone-900 transition-all hover:brightness-110 hover:scale-105"
-              style={{ background: '#f59e0b' }}>
-              Start Learning Free <ArrowRight size={18} />
-            </Link>
-
-            {/* Feature checks */}
-            <div className="flex flex-col gap-2 mt-6">
-              {['No account needed — start in 60 seconds', 'Adapts to any age: 5 to 80+', 'Quiz after each topic to lock knowledge in'].map(f => (
-                <span key={f} className="flex items-center gap-2 text-sm text-white/45">
-                  <CheckCircle size={14} className={theme.textAccent} />
-                  {f}
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Link href="/onboard"
+                className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-semibold text-white transition-all hover:brightness-110 hover:scale-105 shadow-lg shadow-emerald-500/25"
+                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
+                Start Learning Free <ArrowRight size={18} />
+              </Link>
+              {!isPro && (
+                <button onClick={handleUpgrade} disabled={checkoutLoading}
+                  className="inline-flex items-center gap-2 rounded-xl border px-6 py-4 text-sm font-semibold text-emerald-300 transition-all hover:bg-emerald-500/10 disabled:opacity-60"
+                  style={{ borderColor: 'rgba(16,185,129,0.30)' }}>
+                  {checkoutLoading ? 'Loading…' : '⚡ Go Pro — $8/mo'}
+                </button>
+              )}
+              {isPro && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-xs font-bold text-emerald-300">
+                  <CheckCircle size={12} /> Pro Active
                 </span>
-              ))}
+              )}
             </div>
 
-            <div className="flex flex-col items-start gap-0.5 text-xs opacity-50 mt-3">
+            <div className="flex flex-col items-start gap-1 text-xs text-white/30 mt-5">
               <span>✓ 3 free sessions — no account needed</span>
-              <span>✓ Register free for unlimited access</span>
-              <span>✓ No credit card ever</span>
+              <span>✓ Pro unlocks unlimited sessions + all subjects for $8/mo</span>
             </div>
           </div>
 
-          {/* Right: lesson card mockup */}
+          {/* Right: chat preview mockup */}
           <div className="hidden md:flex justify-center items-center">
             <div className="relative w-full max-w-sm float">
-              {/* Warm amber glow behind card */}
-              <div className="absolute inset-x-6 bottom-0 h-32 rounded-full blur-2xl opacity-25"
-                style={{ background: '#f59e0b' }} />
-              {/* Glass lesson card */}
-              <div className="relative rounded-2xl border p-6"
-                style={{
-                  background: 'rgba(245,158,11,0.06)',
-                  backdropFilter: 'blur(20px)',
-                  borderColor: 'rgba(245,158,11,0.20)',
-                }}>
-                {/* Card header */}
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-lg">🔬</span>
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-widest"
-                      style={{ color: 'rgba(253,230,138,0.70)' }}>Science · Grade 8</div>
-                    <div className="text-[10px] text-white/30">Lesson 3 of 6</div>
+              {/* Emerald glow behind card */}
+              <div className="absolute inset-x-4 bottom-0 h-28 rounded-full blur-2xl opacity-25"
+                style={{ background: '#10b981' }} />
+
+              {/* Academic badge */}
+              <div className="absolute -top-4 -right-4 z-10 flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-[11px] font-bold text-emerald-300 backdrop-blur-sm">
+                <GraduationCap size={12} /> Step-by-step tutoring
+              </div>
+
+              {/* Chat card */}
+              <div className="relative rounded-2xl border p-5"
+                style={{ background: 'rgba(4,47,46,0.50)', backdropFilter: 'blur(24px)', borderColor: 'rgba(16,185,129,0.22)', boxShadow: '0 24px 64px rgba(16,185,129,0.12), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+
+                {/* Chat header */}
+                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-emerald-500/10">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-base shrink-0"
+                    style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.30), rgba(20,184,166,0.20))' }}>🎓</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-bold text-white">Tutiq AI</div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                      <span className="text-[10px] text-emerald-400">Online now</span>
+                    </div>
                   </div>
-                  <span className="ml-auto text-[10px] font-bold rounded-full px-2 py-0.5"
-                    style={{ background: 'rgba(245,158,11,0.18)', color: '#fde68a' }}>In Progress</span>
+                  <span className="text-[10px] font-semibold rounded-full px-2.5 py-1 shrink-0"
+                    style={{ background: 'rgba(16,185,129,0.15)', color: '#6ee7b7' }}>Math · Grade 9</span>
                 </div>
 
-                {/* Lesson paragraph */}
-                <div className="rounded-xl border p-4 mb-5"
-                  style={{ borderColor: 'rgba(245,158,11,0.12)', background: 'rgba(255,255,255,0.03)' }}>
-                  <p className="text-sm text-white/70 leading-relaxed">
-                    <span className="font-semibold text-white">Photosynthesis</span> is the process by which plants use sunlight, water, and carbon dioxide to produce oxygen and energy in the form of glucose...
-                  </p>
+                {/* Chat messages with animation */}
+                <div className="flex flex-col gap-3 mb-4 min-h-[120px]">
+                  {CHAT.slice(0, chatStep).map((msg, i) => (
+                    <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} fade-up`}>
+                      <div className="max-w-[88%] rounded-xl px-3 py-2 text-[11px] leading-relaxed"
+                        style={msg.role === 'tutor'
+                          ? { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.82)', border: '1px solid rgba(255,255,255,0.05)' }
+                          : { background: 'rgba(16,185,129,0.22)', color: '#d1fae5' }}>
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                  {/* Typing indicator shown after all messages or while loading */}
+                  {chatStep < CHAT.length && (
+                    <div className="flex justify-start fade-up">
+                      <div className="rounded-xl px-4 py-2.5" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <span className="typing-dot" style={{ color: '#10b981' }} />
+                        <span className="typing-dot" style={{ color: '#10b981' }} />
+                        <span className="typing-dot" style={{ color: '#10b981' }} />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Progress dots */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-white/30">Progress</span>
-                  <div className="flex gap-1.5 ml-auto">
-                    {[true, true, true, false, false, false].map((done, i) => (
-                      <div key={i} className={`h-2 rounded-full transition-all ${done ? 'w-6' : 'w-2'}`}
-                        style={{ background: done ? '#f59e0b' : 'rgba(255,255,255,0.12)' }} />
-                    ))}
+                {/* Input bar */}
+                <div className="flex items-center gap-2 rounded-xl border px-3 py-2.5"
+                  style={{ borderColor: 'rgba(16,185,129,0.18)', background: 'rgba(255,255,255,0.03)' }}>
+                  <span className="text-[11px] text-white/25 flex-1">Ask your next question…</span>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(16,185,129,0.30)' }}>
+                    <ArrowRight size={10} className="text-emerald-400" />
                   </div>
                 </div>
               </div>
@@ -172,61 +258,80 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── STATS ───────────────────────────────────────────── */}
-      <section className="border-y border-white/[0.06] py-8 glass">
+      {/* ── STATS ────────────────────────────────────────────── */}
+      <section className="border-y border-white/[0.06] py-10"
+        style={{ background: 'rgba(6,78,59,0.12)' }}>
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { n: '10k+', l: 'Learners' },
-            { n: '8',    l: 'Subjects' },
-            { n: 'Any',  l: 'Age group' },
-            { n: '£0',   l: 'Always free' },
+            { n: '5,000+', l: 'Students helped',    icon: Users },
+            { n: '10+',    l: 'Subjects covered',   icon: BookOpen },
+            { n: '24/7',   l: 'Always available',   icon: Clock },
+            { n: '4.9★',   l: 'Average rating',     icon: Trophy },
           ].map(s => (
-            <div key={s.l}>
-              <div className={`text-2xl font-extrabold ${theme.gradientText}`}>{s.n}</div>
-              <div className="text-white/45 text-sm mt-1">{s.l}</div>
+            <div key={s.l} className="flex flex-col items-center gap-1">
+              <s.icon size={18} className="text-emerald-500/60 mb-1" />
+              <div className="text-2xl font-extrabold"
+                style={{ background: 'linear-gradient(135deg, #10b981, #6ee7b7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                {s.n}
+              </div>
+              <div className="text-white/40 text-xs">{s.l}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── AGE GROUPS ──────────────────────────────────────── */}
-      <section className="py-14 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-10">
-          <div className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest ${theme.textAccent} mb-3`}>
-            <Layers size={12} /> Who it&apos;s for
+      {/* ── SUBJECT CARDS ────────────────────────────────────── */}
+      <section id="subjects" className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
+              <Layers size={12} /> Subjects
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">What do you want to master?</h2>
+            <p className="text-white/40 text-sm max-w-md mx-auto">Pick a subject — your AI tutor builds a personalised lesson plan around your level and learning pace.</p>
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">Built for every learner</h2>
-          <p className="text-white/40 text-sm">AI adapts the language, depth, and pace to your age and level</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {AGE_GROUPS.map(g => (
-            <div key={g.label} className={`p-6 rounded-2xl border ${g.color}`}>
-              <div className="text-4xl mb-3">{g.emoji}</div>
-              <div className={`text-[10px] font-bold uppercase tracking-widest ${g.accent} mb-1`}>{g.age}</div>
-              <h3 className="font-bold text-white text-base mb-2">{g.label}</h3>
-              <p className="text-white/50 text-sm leading-relaxed">{g.desc}</p>
-            </div>
-          ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {SUBJECTS.map(subject => (
+              <Link key={subject.id} href={`/onboard?subject=${subject.id}`}
+                className={`group relative rounded-2xl border border-white/[0.07] bg-gradient-to-br ${subject.color} p-6 flex flex-col gap-2.5 items-center text-center transition-all duration-250 ${subject.border} ${subject.glow} hover:scale-[1.04] hover:shadow-xl hover:-translate-y-1`}>
+                {/* Top accent line */}
+                <div className="absolute top-0 inset-x-0 h-[1px] rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.5), transparent)' }} />
+                <span className="text-4xl group-hover:scale-110 transition-transform duration-200 mb-1">{subject.icon}</span>
+                <span className="font-bold text-white text-sm">{subject.label}</span>
+                <span className="text-white/40 text-[11px] leading-snug">{subject.desc}</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-400 text-[10px] font-semibold flex items-center gap-1">
+                  Start learning <ArrowRight size={9} />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ────────────────────────────────────── */}
-      <section id="how-it-works" className="py-14 px-6 glass border-y border-white/[0.06]">
+      {/* ── HOW IT WORKS ─────────────────────────────────────── */}
+      <section id="how-it-works" className="py-20 px-6 border-y border-white/[0.06]"
+        style={{ background: 'rgba(6,78,59,0.08)' }}>
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <div className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest ${theme.textAccent} mb-3`}>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
               <BookOpen size={12} /> How it works
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Simple. Personalised. Effective.</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">One-on-one learning, <span style={{ background: 'linear-gradient(135deg, #10b981, #6ee7b7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>minus the scheduling</span></h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {HOW_IT_WORKS.map(step => (
-              <div key={step.step} className="relative pl-6 border-l border-white/[0.08]">
-                <div className={`absolute left-0 top-0 -translate-x-1/2 w-6 h-6 rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center text-xs font-black text-white`}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { step: '1', icon: '👤', title: 'Tell us your subject & level', desc: 'Share your name, age, and what you need help with. 60-second setup — no account required.' },
+              { step: '2', icon: '🗺️', title: 'AI builds your learning path', desc: 'Tutiq creates a step-by-step plan tailored to your age, level, and learning goals.' },
+              { step: '3', icon: '✅', title: 'Learn and quiz after each topic', desc: 'Bite-sized explanations with a quick quiz after each section to cement the knowledge.' },
+            ].map(step => (
+              <div key={step.step} className="relative pl-8 border-l border-emerald-500/20">
+                <div className="absolute left-0 top-0 -translate-x-1/2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black text-white shadow-lg shadow-emerald-500/30"
+                  style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
                   {step.step}
                 </div>
-                <div className="text-2xl mb-3">{step.icon}</div>
-                <h3 className="font-bold text-white text-sm mb-2">{step.title}</h3>
+                <div className="text-3xl mb-4">{step.icon}</div>
+                <h3 className="font-bold text-white text-sm mb-2 leading-snug">{step.title}</h3>
                 <p className="text-white/45 text-xs leading-relaxed">{step.desc}</p>
               </div>
             ))}
@@ -234,44 +339,137 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── SUBJECTS GRID ───────────────────────────────────── */}
-      <section id="subjects" className="py-14 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-extrabold text-white mb-2">What do you want to learn?</h2>
-          <p className="text-white/40 text-sm">Pick a subject and AI builds your personal learning path</p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {subjects.map(subject => (
-            <Link
-              key={subject.id}
-              href={`/onboard?subject=${subject.id}`}
-              className={`${theme.card} ${theme.cardHover} p-4 flex flex-col gap-2 text-center items-center rounded-2xl transition-all group border border-white/[0.06] hover:border-emerald-500/30`}
-            >
-              <span className="text-3xl group-hover:scale-110 transition-transform">{subject.icon}</span>
-              <span className="font-semibold text-white text-sm">{subject.label}</span>
-              <span className="text-white/30 text-xs leading-snug hidden sm:block">{subject.desc}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CTA ─────────────────────────────────────────────── */}
-      <section className="py-14 px-6 glass border-t border-white/[0.06]">
-        <div className="max-w-xl mx-auto text-center">
-          <div className="text-4xl mb-4">🌱</div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Start learning today</h2>
-          <p className="text-white/45 mb-6 text-sm">No account. No credit card. Just learning — at your pace.</p>
-          <Link href="/onboard" className={btn.primary + ' text-base px-10 py-4'}>
-            Start Learning Free <ArrowRight size={18} />
-          </Link>
-          <div className="flex flex-col items-center gap-0.5 text-xs opacity-50 mt-3">
-            <span>✓ 3 free sessions — no account needed</span>
-            <span>✓ Register free for unlimited access</span>
-            <span>✓ No credit card ever</span>
+      {/* ── TESTIMONIALS ─────────────────────────────────────── */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
+              <Trophy size={12} /> Social proof
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Students love Tutiq</h2>
+            <p className="text-white/40 text-sm">Real results from real students — across every subject and age group.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className="rounded-2xl border border-white/[0.07] p-6"
+                style={{ background: 'rgba(6,78,59,0.12)' }}>
+                <div className="stars text-sm mb-3">{'★'.repeat(t.stars)}</div>
+                <p className="text-white/70 text-sm leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <div className="text-white text-xs font-semibold">{t.name}</div>
+                    <div className="text-white/35 text-[11px]">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* ── PRICING — FREE vs PRO ────────────────────────────── */}
+      <section id="pricing" className="py-20 px-6 border-y border-white/[0.06]"
+        style={{ background: 'rgba(6,78,59,0.08)' }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
+              <Lock size={12} /> Plans
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Simple, honest pricing</h2>
+            <p className="text-white/40 text-sm">Start free — upgrade when you want unlimited access for just $8/mo.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {/* FREE */}
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-8">
+              <div className="text-xs font-bold uppercase tracking-widest text-white/35 mb-5">Free</div>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="text-5xl font-extrabold text-white">$0</span>
+              </div>
+              <div className="text-white/35 text-sm mb-7">Forever free — no card needed</div>
+              <ul className="flex flex-col gap-3.5 mb-8">
+                {['3 tutoring sessions / day', '3 subjects available', 'Step-by-step explanations', 'Quiz after each topic'].map(f => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-white/55">
+                    <CheckCircle size={14} className="text-emerald-500/60 shrink-0" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/onboard"
+                className="block w-full text-center rounded-xl border border-white/[0.10] py-3.5 text-sm font-semibold text-white/60 hover:bg-white/[0.05] transition-all">
+                Start Free
+              </Link>
+            </div>
+
+            {/* PRO */}
+            <div className="rounded-2xl border p-8 relative overflow-hidden"
+              style={{ borderColor: 'rgba(16,185,129,0.40)', background: 'rgba(6,78,59,0.25)' }}>
+              {/* Corner glow */}
+              <div className="absolute top-0 right-0 w-56 h-56 rounded-full blur-3xl opacity-15 pointer-events-none"
+                style={{ background: '#10b981' }} />
+              {/* Top shimmer line */}
+              <div className="absolute top-0 inset-x-0 h-[1px]"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.6), transparent)' }} />
+
+              <div className="flex items-center gap-2 mb-5">
+                <div className="text-xs font-bold uppercase tracking-widest text-emerald-400">Pro</div>
+                <span className="rounded-full text-[10px] font-bold px-2.5 py-0.5"
+                  style={{ background: 'rgba(16,185,129,0.22)', color: '#6ee7b7' }}>Most popular</span>
+              </div>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="text-5xl font-extrabold text-white">$8</span>
+                <span className="text-lg font-normal text-white/40">/mo</span>
+              </div>
+              <div className="text-white/40 text-sm mb-7">Personal tutor plan — cancel anytime</div>
+              <ul className="flex flex-col gap-3.5 mb-8">
+                {PRO_FEATURES.map(f => (
+                  <li key={f.label} className="flex items-start gap-2.5 text-sm text-white/80">
+                    <f.icon size={14} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span><span className="font-semibold text-white">{f.label}</span> — {f.desc}</span>
+                  </li>
+                ))}
+              </ul>
+              {isPro ? (
+                <div className="block w-full text-center rounded-xl py-3.5 text-sm font-bold text-emerald-300 border border-emerald-500/30 bg-emerald-500/10">
+                  ✓ You&apos;re on Pro
+                </div>
+              ) : (
+                <button onClick={handleUpgrade} disabled={checkoutLoading}
+                  className="block w-full text-center rounded-xl py-3.5 text-sm font-bold text-white transition-all hover:brightness-110 hover:scale-[1.01] disabled:opacity-60 shadow-lg shadow-emerald-500/20"
+                  style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
+                  {checkoutLoading ? 'Loading…' : '⚡ Upgrade to Pro — $8/mo'}
+                </button>
+              )}
+              <p className="text-center text-white/25 text-[11px] mt-3">Cancel anytime · Instant access</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ──────────────────────────────────────────────── */}
+      <section className="py-20 px-6 relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-x-1/4 top-0 h-full rounded-full blur-3xl opacity-[0.06]"
+            style={{ background: 'radial-gradient(ellipse, #10b981 0%, transparent 70%)' }} />
+        </div>
+        <div className="max-w-xl mx-auto text-center">
+          <div className="text-5xl mb-6">🎓</div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Start your first lesson today</h2>
+          <p className="text-white/40 mb-8 text-sm leading-relaxed">No account. No credit card. Just clear, patient, one-on-one explanations — at your pace, on your schedule.</p>
+          <Link href="/onboard"
+            className="inline-flex items-center gap-2 rounded-xl px-10 py-4 text-base font-semibold text-white transition-all hover:brightness-110 hover:scale-105 shadow-xl shadow-emerald-500/25"
+            style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
+            Start Learning Free <ArrowRight size={18} />
+          </Link>
+          <div className="flex flex-col items-center gap-1.5 text-xs text-white/25 mt-5">
+            <span>✓ 3 free sessions — no account needed</span>
+            <span>✓ Pro unlocks unlimited sessions for $8/mo</span>
+          </div>
+        </div>
+      </section>
 
     </div>
   )
