@@ -40,6 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         {/* Dynamic mesh gradient bg — changes per vertical */}
         <div style={meshStyle} />
+        {/* Animated blob overlays */}
+        <div style={{ position: 'fixed', inset: 0, zIndex: -1, overflow: 'hidden', pointerEvents: 'none' }}>
+          <div className="mesh-blob1" style={{ position: 'absolute', top: '-20%', left: '-10%', width: 600, height: 600, borderRadius: '50%', background: `radial-gradient(circle, ${colors.primary}22 0%, transparent 65%)`, filter: 'blur(40px)' }} />
+          <div className="mesh-blob2" style={{ position: 'absolute', top: '30%', right: '-15%', width: 500, height: 500, borderRadius: '50%', background: `radial-gradient(circle, ${colors.secondary}18 0%, transparent 65%)`, filter: 'blur(40px)' }} />
+          <div className="mesh-blob3" style={{ position: 'absolute', bottom: '-15%', left: '40%', width: 450, height: 450, borderRadius: '50%', background: `radial-gradient(circle, ${colors.primary}15 0%, transparent 65%)`, filter: 'blur(40px)' }} />
+        </div>
 
         <Navbar />
 
