@@ -2,7 +2,7 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, CheckCircle, Loader2, RotateCcw } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2, RotateCcw, FileText } from 'lucide-react'
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
@@ -271,9 +271,17 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
           )}
 
           {!loadingExplain && !explainError && (
-            <button onClick={loadQuiz} className={btn.primary + ' w-full justify-center py-4 text-base'}>
-              Got it — Quiz me <ArrowRight size={18} />
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 mt-2">
+              <button onClick={loadQuiz} className={btn.primary + ' flex-1 justify-center py-4 text-base'}>
+                Got it — Quiz me <ArrowRight size={18} />
+              </button>
+              <Link
+                href={`/learn/${topicId}/mock-exam`}
+                className={btn.secondary + ' flex-1 justify-center py-4 text-base flex items-center gap-2'}
+              >
+                <FileText size={16} /> Past Paper Mode
+              </Link>
+            </div>
           )}
         </>
       )}
