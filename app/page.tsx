@@ -339,6 +339,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── STUDY BUDDY CTA ──────────────────────────────────── */}
+      <section className="py-16 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl border border-emerald-500/20 p-8 md:p-12 flex flex-col md:flex-row items-center gap-8"
+            style={{ background: 'linear-gradient(135deg, rgba(6,78,59,0.25), rgba(5,150,105,0.10))' }}>
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-3">
+                <BookOpen size={12} /> Study Buddy — New
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
+                Upload your notes.<br />
+                <span style={{ background: 'linear-gradient(135deg, #10b981, #6ee7b7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Get quizzes, flashcards &amp; a summary.
+                </span>
+              </h2>
+              <p className="text-white/45 text-sm leading-relaxed mb-6">
+                Drop in any PDF or text file — your AI study buddy instantly generates 5 quiz questions,
+                8 flashcards, and a 5-point summary so you can revise in minutes.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/study"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-[1.03]"
+                  style={{ background: 'linear-gradient(135deg, #10b981, #059669)', boxShadow: '0 4px 20px rgba(16,185,129,0.3)' }}>
+                  <Upload size={15} /> Try Study Buddy
+                </Link>
+                <Link href="/learn"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border border-white/10 text-white/60 hover:text-white transition-all">
+                  Or start tutoring <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+            <div className="flex-shrink-0 hidden md:flex flex-col gap-3 w-52">
+              {[
+                { icon: '📄', label: 'Upload PDF or TXT' },
+                { icon: '🧠', label: 'AI extracts key info' },
+                { icon: '📝', label: '5 quiz questions' },
+                { icon: '🃏', label: '8 flashcards' },
+                { icon: '✅', label: '5-point summary' },
+              ].map(s => (
+                <div key={s.label} className="flex items-center gap-2.5 text-sm text-white/60">
+                  <span className="text-lg w-7 flex-shrink-0">{s.icon}</span>
+                  {s.label}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── TESTIMONIALS ─────────────────────────────────────── */}
       <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
