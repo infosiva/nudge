@@ -166,26 +166,41 @@ const config: VerticalConfig = {
   userLabel: 'Learner',
 
   subjects: [
-    { id: 'maths',     label: 'Maths',           icon: '➕', desc: 'Numbers, algebra, geometry & problem solving',  ageGroups: ['kids','teens','adults'] },
-    { id: 'science',   label: 'Science',          icon: '🔬', desc: 'Physics, chemistry, biology & earth science',   ageGroups: ['kids','teens','adults'] },
-    { id: 'english',   label: 'English',          icon: '📖', desc: 'Reading, writing, grammar & comprehension',     ageGroups: ['kids','teens','adults'] },
-    { id: 'history',   label: 'History',          icon: '🏛️', desc: 'World history, timelines & key events',         ageGroups: ['teens','adults'] },
-    { id: 'geography', label: 'Geography',        icon: '🌍', desc: 'Maps, climate, countries & human geography',    ageGroups: ['kids','teens','adults'] },
-    { id: 'coding',    label: 'Coding',           icon: '💻', desc: 'Python, web basics, logic & algorithms',        ageGroups: ['teens','adults'] },
-    { id: 'languages', label: 'Languages',        icon: '🗣️', desc: 'French, Spanish, Tamil & more',                ageGroups: ['kids','teens','adults'] },
-    { id: 'finance',   label: 'Personal Finance', icon: '💰', desc: 'Budgeting, saving, investing & tax basics',     ageGroups: ['adults'] },
+    // ── GCSE / 11+ Core ────────────────────────────────────────────
+    { id: 'maths-gcse',    label: 'Maths (GCSE)',       icon: '📐', desc: 'AQA/Edexcel/OCR: algebra, number, geometry, statistics & ratio', ageGroups: ['teens'] },
+    { id: 'english-gcse',  label: 'English (GCSE)',     icon: '✍️', desc: 'Language & Literature: analysis, writing skills, unseen texts',  ageGroups: ['teens'] },
+    { id: 'science-gcse',  label: 'Combined Science',   icon: '🔬', desc: 'Biology, Chemistry & Physics — GCSE triple or combined',         ageGroups: ['teens'] },
+    { id: 'history-gcse',  label: 'History (GCSE)',     icon: '🏛️', desc: 'Sources, causation, significance — AQA/Edexcel topics',          ageGroups: ['teens'] },
+    { id: 'geography-gcse',label: 'Geography (GCSE)',   icon: '🌍', desc: 'Human & physical geography, fieldwork & case studies',           ageGroups: ['teens'] },
+    { id: 'eleven-plus',   label: '11+ Prep',           icon: '🎯', desc: 'Verbal reasoning, non-verbal reasoning, maths & comprehension',  ageGroups: ['kids'] },
+    // ── Interview Prep / Career ─────────────────────────────────────
+    { id: 'interview-tech',  label: 'Tech Interview',    icon: '💻', desc: 'DSA, system design, behavioural — FAANG & startup prep',         ageGroups: ['adults'] },
+    { id: 'interview-gen',   label: 'Job Interview',     icon: '💼', desc: 'STAR method, competency questions, salary negotiation',          ageGroups: ['adults','teens'] },
+    { id: 'interview-nurse', label: 'NHS / Clinical',   icon: '🏥', desc: 'Values-based interview, clinical scenarios, NHS knowledge',      ageGroups: ['adults'] },
+    { id: 'interview-law',   label: 'Law / Legal',       icon: '⚖️', desc: 'Vacation scheme, training contract, commercial awareness',       ageGroups: ['adults'] },
+    // ── Adult Learning ──────────────────────────────────────────────
+    { id: 'coding',        label: 'Coding',              icon: '🖥️', desc: 'Python, JavaScript, web dev — beginner to job-ready',            ageGroups: ['teens','adults'] },
+    { id: 'finance',       label: 'Personal Finance',    icon: '💰', desc: 'Budgeting, investing, ISA, pension & tax — UK focus',            ageGroups: ['adults'] },
+    { id: 'english-adult', label: 'English (Adults)',    icon: '📖', desc: 'Writing skills, business English, functional skills L1/L2',      ageGroups: ['adults'] },
+    { id: 'maths-adult',   label: 'Maths (Adults)',      icon: '➕', desc: 'Functional skills, fractions, percentages — everyday maths',     ageGroups: ['adults'] },
   ],
 
-  aiSystemPrompt: `You are Tutiq, an AI tutor that adapts completely to each learner.
-Adapt your teaching style to the learner's age and level.
-For kids: use simple words, analogies, emojis, and short sentences.
-For teens: be engaging and relatable, never preachy.
-For adults: be concise and professional, skip basics they likely know.
-Always check understanding before moving on. Make every learner feel capable.`,
+  aiSystemPrompt: `You are Tutiq, an expert AI tutor specialising in GCSE, 11+, and career preparation.
 
-  aiTutorPrompt: `Structure every lesson as: Hook (why this matters) → Core concept → Example → Check question.
-Ask one question to confirm understanding before continuing.
-One concept per message — never overwhelm.`,
+For GCSE students (age 14-16): Use exam-board specific language (AQA/Edexcel/OCR). Always mention: command words (describe, explain, analyse, evaluate), mark allocations, and worked examples with mark-scheme style answers. Reference real exam structure.
+
+For 11+ students (age 9-11): Keep language simple and encouraging. Focus on speed, pattern recognition, and confidence. Use short practice questions.
+
+For interview prep (adults): Be direct and practical. Use real interview scenarios. Give specific STAR-method examples. Highlight common mistakes. Role-play questions.
+
+For adult learners: Respect their time. Skip patronising basics. Connect concepts to their real life (job, money, daily use). Be concise.
+
+Always: structure lessons clearly, give one worked example, then a practice question. Never overwhelm with more than 3 concepts per session.`,
+
+  aiTutorPrompt: `For GCSE: Structure as → Exam tip (what examiners look for) → Core concept → Worked example with mark scheme → Practice question.
+For interview: Structure as → Why this question exists → Model answer framework → Example answer → Common mistakes to avoid.
+For 11+: Structure as → Quick explanation → Example → Timed practice question.
+One concept per message. Always end with a check question.`,
 
   aiQuizPrompt: `Generate a 5-question micro-quiz for the topic just taught.
 Mix types: multiple choice, true/false, fill-in-the-blank.
@@ -205,9 +220,9 @@ Return JSON: { questions: [{ type, question, options?, answer, explanation }] }`
     exportResults: false,
   },
 
-  metaTitle:       'Tutiq — AI Tutor That Adapts to You',
-  metaDescription: 'Learn maths, science, coding and more with an AI teacher that adapts to your age and level. Free personalised learning paths.',
-  keywords:        ['ai tutor', 'personalised learning', 'tutiq', 'ai teacher', 'learn online', 'kids tutor'],
+  metaTitle:       'Tutiq — GCSE, 11+ & Interview Prep AI Tutor',
+  metaDescription: 'AI tutor for GCSE students, 11+ prep, and adults preparing for job interviews. Personalised lessons, exam tips, mock interviews & quizzes. Free to start.',
+  keywords:        ['gcse tutor', 'gcse revision', '11 plus preparation', 'ai tutor', 'interview preparation', 'mock interview', 'tech interview prep', 'gcse maths', 'gcse english', 'personalised learning', 'tutiq', 'online tutor uk'],
 }
 
 export default config

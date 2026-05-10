@@ -204,6 +204,72 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
             )}
           </div>
 
+          {/* ── EXAM TIPS PANEL (GCSE / interview subjects) ─────── */}
+          {!loadingExplain && !explainError && profile && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 4 }}>
+              {/* Exam board tag */}
+              {['maths-gcse','english-gcse','science-gcse','history-gcse','geography-gcse'].includes(profile.subject) && (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                  {['AQA', 'Edexcel', 'OCR'].map(b => (
+                    <span key={b} style={{ fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 99, background: 'rgba(16,185,129,0.12)', color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.25)' }}>
+                      {b}
+                    </span>
+                  ))}
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', marginLeft: 4 }}>
+                    Aligned with all major exam boards
+                  </span>
+                </div>
+              )}
+
+              {/* Examiner tip box */}
+              {['maths-gcse','english-gcse','science-gcse','history-gcse','geography-gcse'].includes(profile.subject) && (
+                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.22)' }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: '#fbbf24', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    📋 Examiner Tips
+                  </div>
+                  <ul style={{ margin: 0, padding: '0 0 0 14px', color: 'rgba(255,255,255,0.6)', fontSize: 12, lineHeight: 1.7 }}>
+                    <li>Use command words correctly — <strong style={{ color: '#fbbf24' }}>describe</strong> vs <strong style={{ color: '#fbbf24' }}>explain</strong> vs <strong style={{ color: '#fbbf24' }}>analyse</strong></li>
+                    <li>Show working for maths — method marks are available even with a wrong answer</li>
+                    <li>Use PEEL structure for extended answers: <strong style={{ color: '#fbbf24' }}>Point → Evidence → Explain → Link</strong></li>
+                    <li>Time yourself — 1 mark ≈ 1–1.5 minutes in most GCSE papers</li>
+                  </ul>
+                </div>
+              )}
+
+              {/* Interview tips box */}
+              {['interview-tech','interview-gen','interview-nurse','interview-law'].includes(profile.subject) && (
+                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.22)' }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: '#93c5fd', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    🎯 Interview Coach Tips
+                  </div>
+                  <ul style={{ margin: 0, padding: '0 0 0 14px', color: 'rgba(255,255,255,0.6)', fontSize: 12, lineHeight: 1.7 }}>
+                    <li><strong style={{ color: '#93c5fd' }}>STAR method:</strong> Situation → Task → Action → Result — always quantify results</li>
+                    <li>Pause before answering — interviewers respect thoughtful responses</li>
+                    <li>Research the company: values, recent news, role responsibilities</li>
+                    <li>Prepare 2–3 questions to ask at the end — shows genuine interest</li>
+                  </ul>
+                </div>
+              )}
+
+              {/* Pro upsell — shown after free sessions consumed */}
+              {gateCount >= 2 && (
+                <div style={{ padding: '16px 18px', borderRadius: 16, background: 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(20,184,166,0.06))', border: '1px solid rgba(16,185,129,0.3)' }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginBottom: 6 }}>
+                    🚀 You&apos;re doing great — unlock everything
+                  </div>
+                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 12, lineHeight: 1.6 }}>
+                    This is your {gateCount === 2 ? 'last free session' : 'free session'}. Pro gives you unlimited topics, past paper mode, mock interviews, progress tracking & PDF study guides.
+                  </p>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    {['✓ Unlimited sessions', '✓ Mock interviews', '✓ PDF study guides', '✓ Progress tracking', '✓ Past paper mode'].map(f => (
+                      <span key={f} style={{ fontSize: 10, fontWeight: 700, color: '#6ee7b7', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', padding: '2px 8px', borderRadius: 99 }}>{f}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {!loadingExplain && !explainError && (
             <button onClick={loadQuiz} className={btn.primary + ' w-full justify-center py-4 text-base'}>
               Got it — Quiz me <ArrowRight size={18} />

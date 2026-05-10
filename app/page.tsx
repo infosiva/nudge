@@ -2,15 +2,54 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ArrowRight, CheckCircle, BookOpen, Layers, Zap, Star, Lock, BarChart2, FileText, GraduationCap, Trophy, Users, Clock } from 'lucide-react'
+import { ArrowRight, CheckCircle, BookOpen, Layers, Zap, Star, Lock, BarChart2, FileText, GraduationCap, Trophy, Users, Clock, Upload } from 'lucide-react'
+
+// ── Audience tracks ───────────────────────────────────────────
+const TRACKS = [
+  {
+    id: 'gcse',
+    icon: '🎓',
+    label: 'GCSE Students',
+    sublabel: 'Year 9–11',
+    desc: 'Exam-board aligned lessons, past paper tips & mark scheme practice',
+    color: 'from-emerald-500/20 to-teal-500/10',
+    border: 'border-emerald-500/20 hover:border-emerald-400/50',
+    subjects: ['maths-gcse', 'english-gcse', 'science-gcse', 'history-gcse', 'geography-gcse'],
+    boards: ['AQA', 'Edexcel', 'OCR'],
+  },
+  {
+    id: '11plus',
+    icon: '⭐',
+    label: '11+ Prep',
+    sublabel: 'Age 9–11',
+    desc: 'Verbal reasoning, non-verbal reasoning, maths speed drills & comprehension',
+    color: 'from-amber-500/15 to-emerald-500/10',
+    border: 'border-amber-500/20 hover:border-amber-400/50',
+    subjects: ['eleven-plus'],
+    boards: ['CEM', 'GL Assessment'],
+  },
+  {
+    id: 'interview',
+    icon: '💼',
+    label: 'Interview Prep',
+    sublabel: 'Adults & Graduates',
+    desc: 'Mock interviews, STAR method, tech DSA, NHS & law coaching',
+    color: 'from-blue-500/15 to-teal-500/10',
+    border: 'border-blue-500/20 hover:border-blue-400/50',
+    subjects: ['interview-tech', 'interview-gen', 'interview-nurse', 'interview-law'],
+    boards: ['FAANG', 'NHS', 'Law firms', 'All industries'],
+  },
+]
 
 // ── Subject cards ─────────────────────────────────────────────
 const SUBJECTS = [
-  { id: 'math',     label: 'Math',      icon: '📐', desc: 'Algebra, calculus, geometry & more', color: 'from-emerald-500/20 to-teal-500/10', border: 'hover:border-emerald-400/50', glow: 'hover:shadow-emerald-500/20' },
-  { id: 'science',  label: 'Science',   icon: '🔬', desc: 'Physics, chemistry & biology',       color: 'from-teal-500/20 to-cyan-500/10',    border: 'hover:border-teal-400/50',    glow: 'hover:shadow-teal-500/20' },
-  { id: 'history',  label: 'History',   icon: '🏛️', desc: 'World events, civilisations & more', color: 'from-amber-500/10 to-emerald-500/10', border: 'hover:border-amber-400/50',  glow: 'hover:shadow-amber-500/10' },
-  { id: 'language', label: 'Languages', icon: '🌐', desc: 'English, Spanish, French & more',    color: 'from-emerald-600/15 to-green-500/10', border: 'hover:border-green-400/50',  glow: 'hover:shadow-green-500/15' },
-  { id: 'coding',   label: 'Coding',    icon: '💻', desc: 'Python, JS, web dev & algorithms',   color: 'from-cyan-500/20 to-emerald-500/10', border: 'hover:border-cyan-400/50',   glow: 'hover:shadow-cyan-500/20' },
+  { id: 'maths-gcse',     label: 'Maths (GCSE)',       icon: '📐', desc: 'AQA/Edexcel algebra, geometry & statistics', color: 'from-emerald-500/20 to-teal-500/10',   border: 'hover:border-emerald-400/50', glow: 'hover:shadow-emerald-500/20' },
+  { id: 'english-gcse',   label: 'English (GCSE)',     icon: '✍️', desc: 'Language & Literature analysis skills',      color: 'from-teal-500/20 to-cyan-500/10',      border: 'hover:border-teal-400/50',    glow: 'hover:shadow-teal-500/20' },
+  { id: 'science-gcse',   label: 'Combined Science',   icon: '🔬', desc: 'Biology, chemistry & physics GCSE',         color: 'from-cyan-500/20 to-emerald-500/10',   border: 'hover:border-cyan-400/50',    glow: 'hover:shadow-cyan-500/20' },
+  { id: 'eleven-plus',    label: '11+ Prep',           icon: '🎯', desc: 'VR, NVR, maths & comprehension drills',     color: 'from-amber-500/15 to-orange-500/10',   border: 'hover:border-amber-400/50',   glow: 'hover:shadow-amber-500/20' },
+  { id: 'interview-tech', label: 'Tech Interview',     icon: '💻', desc: 'DSA, system design, LeetCode-style',        color: 'from-blue-500/20 to-indigo-500/10',    border: 'hover:border-blue-400/50',    glow: 'hover:shadow-blue-500/20' },
+  { id: 'interview-gen',  label: 'Job Interview',      icon: '💼', desc: 'STAR method & competency questions',        color: 'from-violet-500/20 to-purple-500/10',  border: 'hover:border-violet-400/50',  glow: 'hover:shadow-violet-500/20' },
+  { id: 'coding',         label: 'Coding',             icon: '🖥️', desc: 'Python, JS, web dev beginner to advanced', color: 'from-green-500/20 to-emerald-500/10',  border: 'hover:border-green-400/50',   glow: 'hover:shadow-green-500/20' },
 ]
 
 // ── Chat mockup steps ─────────────────────────────────────────
@@ -133,26 +172,26 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold mb-7"
               style={{ borderColor: 'rgba(16,185,129,0.30)', background: 'rgba(16,185,129,0.08)', color: 'rgba(110,231,183,0.90)' }}>
               <Star size={11} fill="currentColor" />
-              <span>Helped 5,000+ students improve their grades</span>
+              <span>GCSE · 11+ · Interview Prep · Adult Learning</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-5">
-              <span className="text-white/90 block">Your personal AI tutor,</span>
+              <span className="text-white/90 block">Ace your exams.</span>
               <span className="block"
                 style={{ background: 'linear-gradient(135deg, #10b981 0%, #6ee7b7 50%, #14b8a6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                available 24/7
+                Land your dream job.
               </span>
-              <span className="text-white/70 text-4xl md:text-5xl block mt-2 leading-snug">— master any subject.</span>
+              <span className="text-white/70 text-4xl md:text-5xl block mt-2 leading-snug">AI tutor, always ready.</span>
             </h1>
 
             <p className="text-white/50 text-base md:text-lg leading-relaxed mb-8 max-w-md">
-              One-on-one AI tutoring that adapts to your level and explains concepts step by step — like having a brilliant, patient teacher available whenever you need one.
+              Personalised AI tutoring for GCSE & 11+ students, graduates preparing for interviews, and adults upskilling — with exam tips, mock interviews, and instant feedback.
             </p>
 
             {/* Trust pills */}
             <div className="flex flex-wrap gap-2 mb-9">
-              {['No sign-up needed', 'Any age', 'Any subject', 'Khan Academy style'].map(t => (
+              {['AQA · Edexcel · OCR aligned', '3 free sessions', 'STAR method coaching', 'Mock interviews'].map(t => (
                 <span key={t} className="rounded-full border px-3.5 py-1 text-xs font-medium"
                   style={{ borderColor: 'rgba(16,185,129,0.22)', color: 'rgba(110,231,183,0.70)', background: 'rgba(16,185,129,0.06)' }}>
                   · {t}
@@ -280,29 +319,100 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── SUBJECT CARDS ────────────────────────────────────── */}
-      <section id="subjects" className="py-20 px-6">
+      {/* ── 3 AUDIENCE TRACKS ────────────────────────────────── */}
+      <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
-              <Layers size={12} /> Subjects
-            </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">What do you want to master?</h2>
-            <p className="text-white/40 text-sm max-w-md mx-auto">Pick a subject — your AI tutor builds a personalised lesson plan around your level and learning pace.</p>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Who is Tutiq for?</h2>
+            <p className="text-white/40 text-sm">Pick your track — everything is tailored to you from the first lesson.</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid md:grid-cols-3 gap-6">
+            {TRACKS.map(track => (
+              <Link key={track.id} href={`/onboard?subject=${track.subjects[0]}`}
+                className={`group relative rounded-2xl border bg-gradient-to-br ${track.color} ${track.border} p-6 flex flex-col gap-3 transition-all hover:scale-[1.02] hover:shadow-xl`}>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">{track.icon}</span>
+                  <div>
+                    <div className="font-extrabold text-white text-base">{track.label}</div>
+                    <div className="text-xs text-white/40 font-medium">{track.sublabel}</div>
+                  </div>
+                </div>
+                <p className="text-white/55 text-sm leading-relaxed">{track.desc}</p>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {track.boards.map(b => (
+                    <span key={b} className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      {b}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1 text-emerald-400 text-xs font-semibold mt-auto pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Start {track.label} <ArrowRight size={11} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SUBJECT CARDS ────────────────────────────────────── */}
+      <section id="subjects" className="py-12 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
+              <Layers size={12} /> Topics
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Pick a topic, start immediately</h2>
+            <p className="text-white/40 text-sm max-w-md mx-auto">No account needed. 3 free sessions. Your AI tutor builds a personalised plan in seconds.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {SUBJECTS.map(subject => (
               <Link key={subject.id} href={`/onboard?subject=${subject.id}`}
-                className={`group relative rounded-2xl border border-white/[0.07] bg-gradient-to-br ${subject.color} p-6 flex flex-col gap-2.5 items-center text-center transition-all duration-250 ${subject.border} ${subject.glow} hover:scale-[1.04] hover:shadow-xl hover:-translate-y-1`}>
-                {/* Top accent line */}
+                className={`group relative rounded-2xl border border-white/[0.07] bg-gradient-to-br ${subject.color} p-5 flex flex-col gap-2 items-center text-center transition-all duration-250 ${subject.border} ${subject.glow} hover:scale-[1.04] hover:shadow-xl hover:-translate-y-1`}>
                 <div className="absolute top-0 inset-x-0 h-[1px] rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.5), transparent)' }} />
-                <span className="text-4xl group-hover:scale-110 transition-transform duration-200 mb-1">{subject.icon}</span>
+                <span className="text-3xl group-hover:scale-110 transition-transform duration-200 mb-1">{subject.icon}</span>
                 <span className="font-bold text-white text-sm">{subject.label}</span>
                 <span className="text-white/40 text-[11px] leading-snug">{subject.desc}</span>
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-400 text-[10px] font-semibold flex items-center gap-1">
-                  Start learning <ArrowRight size={9} />
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-400 text-[10px] font-semibold flex items-center gap-1 mt-1">
+                  Start now <ArrowRight size={9} />
                 </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── GAMES & PRACTICE ─────────────────────────────────── */}
+      <section className="py-16 px-6 border-y border-white/[0.06]" style={{ background: 'rgba(6,78,59,0.08)' }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-amber-400 mb-4">
+              🎮 Practice Games
+            </div>
+            <h2 className="text-3xl font-extrabold text-white mb-3">Learn through games & challenges</h2>
+            <p className="text-white/40 text-sm">Gamified practice — earn streaks, beat your score, challenge friends</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: '⚡', label: 'Speed Quiz',       desc: '60-second rapid-fire questions. Race the clock.',          href: '/onboard?mode=speed',  color: '#f59e0b' },
+              { icon: '🧩', label: 'Topic Challenges', desc: 'Multi-topic exam-style challenge. Mix subjects.',           href: '/onboard?mode=challenge', color: '#10b981' },
+              { icon: '🎭', label: 'Mock Interview',   desc: 'AI asks, you answer. Get scored & instant feedback.',      href: '/onboard?subject=interview-gen', color: '#60a5fa' },
+              { icon: '📝', label: 'Past Paper Mode',  desc: 'AI generates GCSE-style questions with mark schemes.',     href: '/onboard?mode=pastpaper', color: '#a78bfa' },
+            ].map(g => (
+              <Link key={g.label} href={g.href}
+                className="group rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 flex flex-col gap-3 transition-all hover:scale-[1.03] hover:bg-white/[0.06] hover:border-white/[0.14]">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+                  style={{ background: `${g.color}18`, border: `1px solid ${g.color}30` }}>
+                  {g.icon}
+                </div>
+                <div>
+                  <div className="font-bold text-white text-sm mb-1">{g.label}</div>
+                  <div className="text-white/40 text-xs leading-relaxed">{g.desc}</div>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: g.color }}>
+                  Play now <ArrowRight size={10} />
+                </div>
               </Link>
             ))}
           </div>
