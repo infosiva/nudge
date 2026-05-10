@@ -161,7 +161,15 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
     const doneKey = `nudge_done_${profile.subject}`
     const raw = localStorage.getItem(doneKey)
     const done: string[] = raw ? JSON.parse(raw) : []
-    if (!done.includes(topicId)) done.push(topicId)
+    if (!done.includes(topicId)) {
+      done.push(topicId)
+      // Update streak
+      const today = new Date().toDateString()
+      const yesterday = new Date(Date.now() - 86400000).toDateString()
+      const streakData = JSON.parse(localStorage.getItem('nudge_streak') ?? '{}')
+      const count = streakData.lastDate === today ? streakData.count : streakData.lastDate === yesterday ? (streakData.count ?? 0) + 1 : 1
+      localStorage.setItem('nudge_streak', JSON.stringify({ count, lastDate: today }))
+    }
     localStorage.setItem(doneKey, JSON.stringify(done))
     const allowed = await gateIncrement()
     if (allowed) router.push('/learn')
@@ -365,6 +373,18 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
                   </div>
                 )}
               </div>
+
+              {/* Hint button — show before answering */}
+              {!revealed && (
+                <details style={{ marginTop: -8 }}>
+                  <summary style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', cursor: 'pointer', userSelect: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    💡 Show hint
+                  </summary>
+                  <div style={{ marginTop: 8, padding: '10px 14px', borderRadius: 10, background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+                    {q.explanation.slice(0, Math.min(120, q.explanation.indexOf('.') + 1) || 80)}…
+                  </div>
+                </details>
+              )}
 
               {/* Explanation */}
               {revealed && (

@@ -2,11 +2,35 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, Lock, CheckCircle, BookOpen, Loader2 } from 'lucide-react'
+import { ArrowRight, Lock, CheckCircle, BookOpen, Loader2, Flame, Trophy, Target, Clock } from 'lucide-react'
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
 const config = _config as AiToolConfig
+
+function getStreak(): number {
+  try {
+    const data = JSON.parse(localStorage.getItem('nudge_streak') ?? '{}')
+    const today = new Date().toDateString()
+    const yesterday = new Date(Date.now() - 86400000).toDateString()
+    if (data.lastDate === today) return data.count ?? 1
+    if (data.lastDate === yesterday) return data.count ?? 1
+    return 0
+  } catch { return 0 }
+}
+
+function updateStreak() {
+  try {
+    const today = new Date().toDateString()
+    const data = JSON.parse(localStorage.getItem('nudge_streak') ?? '{}')
+    const yesterday = new Date(Date.now() - 86400000).toDateString()
+    let count = 1
+    if (data.lastDate === today) count = data.count
+    else if (data.lastDate === yesterday) count = (data.count ?? 0) + 1
+    localStorage.setItem('nudge_streak', JSON.stringify({ count, lastDate: today }))
+    return count
+  } catch { return 1 }
+}
 
 interface Profile {
   name: string
@@ -30,8 +54,11 @@ export default function LearnPage() {
   const [completed, setCompleted] = useState<string[]>([])
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState('')
+  const [streak, setStreak]       = useState(0)
+  const [totalDone, setTotalDone] = useState(0)
 
   useEffect(() => {
+    setStreak(getStreak())
     const raw = localStorage.getItem('nudge_profile')
     if (!raw) { router.replace('/onboard'); return }
 
@@ -40,7 +67,11 @@ export default function LearnPage() {
 
     // Load completed topics from localStorage
     const doneRaw = localStorage.getItem(`nudge_done_${p.subject}`)
-    if (doneRaw) setCompleted(JSON.parse(doneRaw))
+    if (doneRaw) {
+      const done = JSON.parse(doneRaw)
+      setCompleted(done)
+      setTotalDone(done.length)
+    }
 
     // Load or generate topics
     const topicKey = `nudge_topics_${p.subject}_${p.level}_${p.age}`
@@ -115,15 +146,40 @@ export default function LearnPage() {
             </div>
           </div>
 
+          {/* Stats strip */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-2xl p-4 text-center" style={{ background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)' }}>
+              <Flame size={20} className="mx-auto mb-1" style={{ color: '#fbbf24' }} />
+              <div className="text-xl font-black text-white">{streak}</div>
+              <div className="text-xs text-white/40">day streak</div>
+            </div>
+            <div className="rounded-2xl p-4 text-center" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
+              <Trophy size={20} className="mx-auto mb-1" style={{ color: '#10b981' }} />
+              <div className="text-xl font-black text-white">{totalDone}</div>
+              <div className="text-xs text-white/40">topics done</div>
+            </div>
+            <div className="rounded-2xl p-4 text-center" style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}>
+              <Target size={20} className="mx-auto mb-1" style={{ color: '#818cf8' }} />
+              <div className="text-xl font-black text-white">{progressPct}%</div>
+              <div className="text-xs text-white/40">complete</div>
+            </div>
+          </div>
+
           {/* Continue Learning */}
           {!loading && nextTopic && (
             <div className={`${theme.card} border ${theme.border} p-6 ${theme.glow}`}>
-              <p className={`text-xs font-bold ${theme.textAccent} uppercase tracking-widest mb-3`}>Continue Learning</p>
+              <p className={`text-xs font-bold ${theme.textAccent} uppercase tracking-widest mb-3`}>▶ Continue Learning</p>
               <h2 className="text-xl font-bold text-white mb-2">{nextTopic.title}</h2>
               <p className="text-white/50 text-sm mb-5">{nextTopic.desc}</p>
-              <Link href={`/learn/${nextTopic.id}`} className={btn.primary}>
-                Start lesson <ArrowRight size={16} />
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link href={`/learn/${nextTopic.id}`} className={btn.primary}>
+                  Start lesson <ArrowRight size={16} />
+                </Link>
+                <Link href={`/learn/${nextTopic.id}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <Clock size={14} /> Quick quiz only
+                </Link>
+              </div>
             </div>
           )}
 
@@ -159,11 +215,28 @@ export default function LearnPage() {
         </div>
 
         {/* ── Sidebar: topic list ─────────────────────────────── */}
-        <div className="lg:w-72 flex-shrink-0">
+        <div className="lg:w-72 flex-shrink-0 space-y-4">
+
+          {/* XP / Level card */}
+          <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Your Level</span>
+              <span className="text-xs font-black" style={{ color: '#fbbf24' }}>
+                {totalDone < 3 ? '🌱 Seedling' : totalDone < 8 ? '📘 Explorer' : totalDone < 15 ? '🔥 Achiever' : '🏆 Master'}
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+              <div className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${Math.min(100, (totalDone % 5) * 20)}%`, background: 'linear-gradient(90deg,#10b981,#34d399)' }} />
+            </div>
+            <p className="text-[11px] text-white/30 mt-1.5">{totalDone % 5}/5 topics to next level</p>
+          </div>
+
           <div className={`${theme.card} p-5`}>
             <div className="flex items-center gap-2 mb-5">
               <BookOpen size={16} className={theme.textAccent} />
               <span className="font-semibold text-white text-sm">Learning Path</span>
+              <span className="ml-auto text-xs text-white/30">{completed.length}/{topics.length}</span>
             </div>
 
             {loading && (
@@ -214,11 +287,11 @@ export default function LearnPage() {
           </div>
 
           {/* Change subject */}
-          <Link href="/onboard" className="block mt-4 text-center text-white/30 hover:text-white/60 text-xs transition-colors">
+          <Link href="/onboard" className="block mt-2 text-center text-white/30 hover:text-white/60 text-xs transition-colors">
             Change subject →
           </Link>
 
-        </div>
+        </div>{/* end sidebar space-y-4 */}
 
       </div>
     </div>
