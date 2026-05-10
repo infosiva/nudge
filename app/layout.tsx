@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar'
 import FooterExtras from '@/components/FooterExtras'
 import ChatBot from '@/components/ChatBot'
 import Providers from '@/components/Providers'
+import FeedbackWidget from '@/components/FeedbackWidget'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Providers>
 
         <ChatBot />
+        <FeedbackWidget siteName="Tutiq" accentColor="#10b981" accentColor2="#34d399" />
 
         <footer className="py-8 px-6">
           <FooterExtras />
