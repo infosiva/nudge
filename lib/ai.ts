@@ -340,14 +340,36 @@ export async function aiChat(
   return text
 }
 
-// ── In-memory response cache (1h TTL) ────────────────────────────────────────
-const _cache = new Map<string, { text: string; ts: number }>()
-const TTL    = 60 * 60 * 1000
+// ── Persistent response cache (Vercel data cache + in-memory L1) ─────────────
+// L1: in-process Map — survives within same function instance (fast)
+// L2: Next.js unstable_cache — survives across cold starts on Vercel (free, no Redis needed)
+// TTL: 24h for learning paths, 1h default
+const _memCache = new Map<string, { text: string; ts: number }>()
+const MEM_TTL   = 60 * 60 * 1000 // 1h
 
-export async function aiCached(key: string, fn: () => Promise<string>): Promise<string> {
-  const hit = _cache.get(key)
-  if (hit && Date.now() - hit.ts < TTL) return hit.text
-  const text = await fn()
-  _cache.set(key, { text, ts: Date.now() })
-  return text
+export async function aiCached(
+  key: string,
+  fn: () => Promise<string>,
+  ttlSeconds = 3600,
+): Promise<string> {
+  // L1 — memory hit
+  const mem = _memCache.get(key)
+  if (mem && Date.now() - mem.ts < MEM_TTL) return mem.text
+
+  // L2 — Next.js data cache (persists across cold starts on Vercel)
+  try {
+    const { unstable_cache } = await import('next/cache')
+    const cached = await unstable_cache(
+      async () => fn(),
+      [key],
+      { revalidate: ttlSeconds, tags: ['ai-response'] }
+    )()
+    _memCache.set(key, { text: cached, ts: Date.now() })
+    return cached
+  } catch {
+    // unstable_cache unavailable (local dev without Next server) — call directly
+    const text = await fn()
+    _memCache.set(key, { text, ts: Date.now() })
+    return text
+  }
 }

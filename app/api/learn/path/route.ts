@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'subject and level required' }, { status: 400 })
     }
 
-    const cacheKey = `learn_path_${subject}_${level}_${age}`
+    const cacheKey = `learn_path_v2_${subject}_${level}_${age}`
 
     const raw = await aiCached(cacheKey, () =>
       aiChat(
@@ -41,7 +41,7 @@ Rules:
         ],
         'You are a curriculum designer. Output only valid JSON, no markdown fences, no explanation.'
       )
-    )
+    , 86400) // 24h — learning paths rarely change
 
     // Strip markdown fences if model ignored instructions
     const cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim()
