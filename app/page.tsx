@@ -3,6 +3,14 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowRight, CheckCircle, BookOpen, Layers, Zap, Star, Lock, BarChart2, FileText, GraduationCap, Trophy, Users, Clock, Upload } from 'lucide-react'
+import GuidedTour, { type TourStep } from '@/components/GuidedTour'
+
+const NUDGE_TOUR: TourStep[] = [
+  { target: '#hero-cta', title: 'Start learning free', icon: '🚀', body: 'Get 3 free AI sessions — no account needed. Just pick a track and go.', placement: 'bottom' },
+  { target: '#subjects', title: 'Choose your track', icon: '🎓', body: 'GCSE, A-Level, or adult skills — Nudge adapts explanations to your exact level.', placement: 'top' },
+  { target: '#how-it-works', title: 'How it works', icon: '🧠', body: 'Type a question, get a patient AI tutor. No time limit, no judgement.', placement: 'top' },
+  { target: '#pricing', title: 'Unlock unlimited', icon: '⚡', body: 'Go Pro for $8/mo — unlimited sessions across all subjects.', placement: 'top' },
+]
 
 // ── Audience tracks ───────────────────────────────────────────
 const TRACKS = [
@@ -201,7 +209,7 @@ export default function HomePage() {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-4">
-              <Link href="/onboard"
+              <Link href="/onboard" id="hero-cta"
                 className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-base font-semibold text-white transition-all hover:brightness-110 hover:scale-105 shadow-lg shadow-emerald-500/25"
                 style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
                 Start Learning Free <ArrowRight size={18} />
@@ -630,6 +638,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <GuidedTour steps={NUDGE_TOUR} storageKey="nudge_tour_v1" accentColor="#10b981" />
     </div>
   )
 }
