@@ -163,12 +163,16 @@ function OnboardInner() {
                   <label className="block text-sm font-medium text-white/70 mb-2">Your age</label>
                   <input
                     className="input-dark"
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     placeholder="e.g. 14"
-                    min={5}
-                    max={80}
+                    maxLength={3}
                     value={age}
-                    onChange={e => setAge(e.target.value === '' ? '' : Number(e.target.value))}
+                    onChange={e => {
+                      const v = e.target.value.replace(/\D/g, '')
+                      setAge(v === '' ? '' : Number(v))
+                    }}
                     onKeyDown={e => e.key === 'Enter' && next()}
                   />
                   {errors.age && <p className="text-red-400 text-xs mt-1">{errors.age}</p>}

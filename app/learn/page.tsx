@@ -98,7 +98,21 @@ export default function LearnPage() {
       .finally(() => setLoading(false))
   }, [router])
 
-  if (!profile) return null
+  if (!profile) return (
+    <div className="min-h-screen px-6 py-12 max-w-6xl mx-auto animate-pulse">
+      <div className="h-1 bg-white/[0.06] rounded-full mb-10" />
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex-1 space-y-6">
+          <div className="rounded-2xl h-32 bg-white/[0.04]" />
+          <div className="grid grid-cols-3 gap-3">
+            {[0,1,2].map(i => <div key={i} className="rounded-2xl h-24 bg-white/[0.04]" />)}
+          </div>
+          <div className="rounded-2xl h-40 bg-white/[0.04]" />
+        </div>
+        <div className="lg:w-72 rounded-2xl h-64 bg-white/[0.04]" />
+      </div>
+    </div>
+  )
 
   const subject = config.subjects.find(s => s.id === profile.subject)
   const levelLabel = { beginner: 'Beginner', some: 'Some knowledge', confident: 'Confident' }[profile.level]
@@ -175,7 +189,7 @@ export default function LearnPage() {
                 <Link href={`/learn/${nextTopic.id}`} className={btn.primary}>
                   Start lesson <ArrowRight size={16} />
                 </Link>
-                <Link href={`/learn/${nextTopic.id}`}
+                <Link href={`/learn/${nextTopic.id}?mode=quiz`}
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
                   <Clock size={14} /> Quick quiz only
                 </Link>
