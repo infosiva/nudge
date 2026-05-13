@@ -207,6 +207,17 @@ export default function HomePage() {
               ))}
             </div>
 
+            {/* Trust bar */}
+            <div className="flex flex-wrap items-center gap-3 text-xs text-white/30 mb-2">
+              <span className="flex items-center gap-1"><span className="text-yellow-400">★★★★★</span> 4.8/5</span>
+              <span>·</span>
+              <span>1,800+ students</span>
+              <span>·</span>
+              <span>GCSE · 11+ · Interview</span>
+              <span>·</span>
+              <a href="/pricing" className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition">See pricing</a>
+            </div>
+
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-4">
               <Link href="/onboard" id="hero-cta"
