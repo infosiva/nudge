@@ -133,3 +133,6 @@ body {
 .mesh-blob1 { animation: meshBlob1 16s ease-in-out infinite; }
 .mesh-blob2 { animation: meshBlob2 20s ease-in-out 4s infinite; }
 .mesh-blob3 { animation: meshBlob3 14s ease-in-out 8s infinite; }
+
+/* ── Mobile: prevent horizontal overflow on all devices ── */
+html, body { overflow-x: hidden; max-width: 100%; }
