@@ -468,6 +468,86 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── LESSON PATH ──────────────────────────────────────── */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
+              <Layers size={12} /> Structured Learning Paths
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Know exactly <span style={{ background: 'linear-gradient(135deg, #10b981, #6ee7b7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>where you are</span></h2>
+            <p className="text-white/40 text-sm max-w-xl mx-auto">Every subject has a structured path. Work through topics in order, quiz after each one, and track what&apos;s done.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { subject: 'GCSE Maths', icon: '📐', topics: ['Number & Algebra', 'Geometry & Measures', 'Statistics & Probability', 'Ratio & Proportion', 'Mock Paper Practice'], done: 2 },
+              { subject: 'Tech Interview', icon: '💻', topics: ['Arrays & Strings', 'Trees & Graphs', 'Dynamic Programming', 'System Design Basics', 'Mock Interview Session'], done: 1 },
+            ].map(path => (
+              <div key={path.subject} className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">{path.icon}</span>
+                  <div>
+                    <div className="text-sm font-bold text-white">{path.subject}</div>
+                    <div className="text-[10px] text-emerald-400">{path.done}/{path.topics.length} topics complete</div>
+                  </div>
+                  <div className="ml-auto w-12 h-12 relative">
+                    <svg className="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+                      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#10b981" strokeWidth="3"
+                        strokeDasharray={`${(path.done / path.topics.length) * 100} 100`} strokeLinecap="round" />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-emerald-400">{Math.round((path.done / path.topics.length) * 100)}%</span>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  {path.topics.map((topic, i) => (
+                    <div key={topic} className={`flex items-center gap-2.5 text-xs py-1.5 px-2 rounded-lg ${i < path.done ? 'text-emerald-300 bg-emerald-500/10' : 'text-white/30'}`}>
+                      {i < path.done ? <CheckCircle size={12} className="text-emerald-400 shrink-0" /> : <div className="w-3 h-3 rounded-full border border-white/15 shrink-0" />}
+                      {topic}
+                      {i === path.done && <span className="ml-auto text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded-full">Next</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-6">
+            <Link href="/onboard" className="inline-flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 font-semibold transition">
+              Start your learning path <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── EXAM TIMER / TIMED PRACTICE ──────────────────────── */}
+      <section className="py-16 px-6 border-t border-white/[0.06]" style={{ background: 'rgba(6,78,59,0.06)' }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-amber-400 mb-4">
+              <Clock size={12} /> Timed Exam Practice
+            </div>
+            <h2 className="text-3xl font-extrabold text-white mb-3">Practice under <span style={{ background: 'linear-gradient(135deg, #f59e0b, #fcd34d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>real exam pressure</span></h2>
+            <p className="text-white/40 text-sm max-w-lg mx-auto">Set a timer, pick a topic, and Tutiq gives you past-paper style questions. AI marks your answers against the mark scheme.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { time: '15 min', label: 'Quick drill', icon: '⚡', desc: '5–8 questions' },
+              { time: '30 min', label: 'Topic test', icon: '📝', desc: '12–15 questions' },
+              { time: '45 min', label: 'Mock paper', icon: '📄', desc: 'Full section' },
+              { time: 'Custom', label: 'Your pace', icon: '🎯', desc: 'Set own timer' },
+            ].map(opt => (
+              <Link href="/onboard" key={opt.time}
+                className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 text-center hover:border-amber-500/40 hover:bg-amber-500/5 transition-all group">
+                <div className="text-2xl mb-2">{opt.icon}</div>
+                <div className="text-base font-black text-white group-hover:text-amber-300 transition-colors">{opt.time}</div>
+                <div className="text-xs font-semibold text-white/60 mb-1">{opt.label}</div>
+                <div className="text-[10px] text-white/30">{opt.desc}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── STUDY BUDDY CTA ──────────────────────────────────── */}
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto">
