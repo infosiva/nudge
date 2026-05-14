@@ -29,9 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       className="h-full"
-      suppressHydrationWarning
       style={{
-        // CSS vars consumed by globals.css animations and scrollbar
         '--theme-primary':   colors.primary,
         '--theme-secondary': colors.secondary,
         '--theme-base':      colors.base,
