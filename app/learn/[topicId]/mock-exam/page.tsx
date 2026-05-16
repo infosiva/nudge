@@ -56,6 +56,7 @@ export default function MockExamPage({ params }: { params: Promise<{ topicId: st
   const [timeLeft, setTimeLeft]   = useState(0)
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
     const raw = localStorage.getItem('nudge_profile')
     if (raw) setProfile(JSON.parse(raw))
   }, [])
@@ -114,7 +115,10 @@ export default function MockExamPage({ params }: { params: Promise<{ topicId: st
     for (const q of paper.questions) {
       const userAns = (answers[q.id] ?? '').trim().toLowerCase()
       const correct = q.answer.trim().toLowerCase()
-      if (userAns === correct || correct.includes(userAns)) {
+      // Exact match for MCQ; for open-ended allow partial if >70% chars match
+      const isExact = userAns === correct
+      const isPartial = q.options == null && userAns.length > 3 && correct.includes(userAns)
+      if (isExact || isPartial) {
         earned += q.marks
       }
     }
@@ -156,7 +160,7 @@ export default function MockExamPage({ params }: { params: Promise<{ topicId: st
           {paper.questions.map(q => {
             const userAns = (answers[q.id] ?? '').trim().toLowerCase()
             const correct = q.answer.trim().toLowerCase()
-            const isCorrect = userAns === correct || correct.includes(userAns)
+            const isCorrect = userAns === correct || (q.options == null && userAns.length > 3 && correct.includes(userAns))
             return (
               <div key={q.id} className={`${theme.card} p-5 border-l-2 ${isCorrect ? 'border-emerald-500' : 'border-red-500/60'}`}>
                 <div className="flex justify-between items-start mb-2">
@@ -313,7 +317,7 @@ export default function MockExamPage({ params }: { params: Promise<{ topicId: st
             ))}
           </div>
 
-          <button onClick={() => setStarted(true)} className={btn.primary + ' w-full justify-center py-3'}>
+          <button onClick={() => { setStarted(true); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className={btn.primary + ' w-full justify-center py-3'}>
             Start exam <Clock size={16} />
           </button>
         </div>

@@ -83,10 +83,10 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
   const [quizDone, setQuizDone]       = useState(false)
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
     const raw = localStorage.getItem('nudge_profile')
     if (!raw) { router.replace('/onboard'); return }
     const p: Profile = JSON.parse(raw)
-    setProfile(p)
 
     // Resolve topic title from localStorage topics
     const topicKey = `nudge_topics_${p.subject}_${p.level}_${p.age}`
@@ -113,6 +113,7 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
 
   async function loadQuiz() {
     if (!profile) return
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     setShowQuiz(true)
     setLoadingQuiz(true)
     setQuizError('')
@@ -141,12 +142,13 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
     setSelected(opt)
     setRevealed(true)
     const q = questions[qIndex]
-    const correct = opt.trim().toLowerCase() === q.answer.trim().toLowerCase() ||
-                    q.answer.toLowerCase().includes(opt.trim().toLowerCase())
+    // Exact match only — substring match causes false positives (e.g. "T" inside "True")
+    const correct = opt.trim().toLowerCase() === q.answer.trim().toLowerCase()
     if (correct) setScore(s => s + 1)
   }
 
   function nextQuestion() {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     if (qIndex + 1 >= questions.length) {
       setQuizDone(true)
     } else {
@@ -310,6 +312,14 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
       {/* ── QUIZ ─────────────────────────────────────────────── */}
       {showQuiz && (
         <div>
+          {/* Back to lesson button */}
+          <button
+            onClick={() => { setShowQuiz(false); setQuizDone(false); setSelected(null); setRevealed(false); setQIndex(0); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+            className={`${theme.textAccent} hover:opacity-80 transition-opacity flex items-center gap-2 text-sm mb-6`}
+          >
+            <ArrowLeft size={15} /> Back to lesson
+          </button>
+
           {loadingQuiz && (
             <div className={`${theme.card} p-8 flex flex-col items-center gap-4`}>
               <Loader2 size={28} className={`${theme.textAccent} animate-spin`} />
@@ -387,21 +397,17 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
               )}
 
               {/* Explanation */}
-              {revealed && (
-                <div className={`p-4 rounded-xl border ${
-                  (selected ?? '').trim().toLowerCase() === q.answer.trim().toLowerCase() || q.answer.toLowerCase().includes((selected ?? '').trim().toLowerCase())
-                    ? 'border-emerald-500/40 bg-emerald-500/10'
-                    : 'border-red-500/40 bg-red-500/10'
-                }`}>
-                  <p className="font-semibold text-white text-sm mb-1">
-                    {(selected ?? '').trim().toLowerCase() === q.answer.trim().toLowerCase() || q.answer.toLowerCase().includes((selected ?? '').trim().toLowerCase())
-                      ? '✅ Correct!'
-                      : `❌ Not quite — the answer is: ${q.answer}`
-                    }
-                  </p>
-                  <p className="text-white/65 text-sm leading-relaxed">{q.explanation}</p>
-                </div>
-              )}
+              {revealed && (() => {
+                const wasCorrect = (selected ?? '').trim().toLowerCase() === q.answer.trim().toLowerCase()
+                return (
+                  <div className={`p-4 rounded-xl border ${wasCorrect ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-red-500/40 bg-red-500/10'}`}>
+                    <p className="font-semibold text-white text-sm mb-1">
+                      {wasCorrect ? '✅ Correct!' : `❌ Not quite — the answer is: ${q.answer}`}
+                    </p>
+                    <p className="text-white/65 text-sm leading-relaxed">{q.explanation}</p>
+                  </div>
+                )
+              })()}
 
               {revealed && (
                 <button onClick={nextQuestion} className={btn.primary + ' w-full justify-center py-3'}>
@@ -447,8 +453,7 @@ function renderOption(
   onSelect: (opt: string) => void,
 ) {
   const isSelected = selected === opt
-  const isCorrect  = opt.trim().toLowerCase() === q.answer.trim().toLowerCase() ||
-                     q.answer.toLowerCase().includes(opt.trim().toLowerCase())
+  const isCorrect  = opt.trim().toLowerCase() === q.answer.trim().toLowerCase()
 
   let cls = 'w-full text-left p-4 rounded-xl border transition-all duration-200 font-medium text-sm '
   if (!revealed) {
