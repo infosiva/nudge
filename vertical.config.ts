@@ -166,13 +166,22 @@ const config: VerticalConfig = {
   userLabel: 'Learner',
 
   subjects: [
-    // ── GCSE / 11+ Core ────────────────────────────────────────────
-    { id: 'maths-gcse',    label: 'Maths (GCSE)',       icon: '📐', desc: 'AQA/Edexcel/OCR: algebra, number, geometry, statistics & ratio', ageGroups: ['teens'] },
-    { id: 'english-gcse',  label: 'English (GCSE)',     icon: '✍️', desc: 'Language & Literature: analysis, writing skills, unseen texts',  ageGroups: ['teens'] },
-    { id: 'science-gcse',  label: 'Combined Science',   icon: '🔬', desc: 'Biology, Chemistry & Physics — GCSE triple or combined',         ageGroups: ['teens'] },
-    { id: 'history-gcse',  label: 'History (GCSE)',     icon: '🏛️', desc: 'Sources, causation, significance — AQA/Edexcel topics',          ageGroups: ['teens'] },
-    { id: 'geography-gcse',label: 'Geography (GCSE)',   icon: '🌍', desc: 'Human & physical geography, fieldwork & case studies',           ageGroups: ['teens'] },
-    { id: 'eleven-plus',   label: '11+ Prep',           icon: '🎯', desc: 'Verbal reasoning, non-verbal reasoning, maths & comprehension',  ageGroups: ['kids'] },
+    // ── GCSE Core ──────────────────────────────────────────────────
+    { id: 'maths-gcse',      label: 'Maths (GCSE)',          icon: '📐', desc: 'AQA/Edexcel/OCR: algebra, number, geometry, statistics & ratio',   ageGroups: ['teens'] },
+    { id: 'english-gcse',    label: 'English (GCSE)',         icon: '✍️', desc: 'Language & Literature: analysis, writing skills, unseen texts',    ageGroups: ['teens'] },
+    { id: 'science-gcse',    label: 'Combined Science',       icon: '🔬', desc: 'Biology, Chemistry & Physics — triple or combined science',        ageGroups: ['teens'] },
+    // ── GCSE Triple Science ─────────────────────────────────────────
+    { id: 'biology-gcse',    label: 'Biology (GCSE)',         icon: '🧬', desc: 'Cells, genetics, evolution, ecosystems — AQA/Edexcel/OCR triple', ageGroups: ['teens'] },
+    { id: 'chemistry-gcse',  label: 'Chemistry (GCSE)',       icon: '⚗️', desc: 'Atomic structure, bonding, quantitative chemistry & organic',     ageGroups: ['teens'] },
+    { id: 'physics-gcse',    label: 'Physics (GCSE)',         icon: '⚡', desc: 'Forces, energy, waves, electricity & space — triple science',     ageGroups: ['teens'] },
+    // ── GCSE Humanities & Languages ────────────────────────────────
+    { id: 'history-gcse',    label: 'History (GCSE)',         icon: '🏛️', desc: 'Sources, causation, significance — AQA/Edexcel topics',          ageGroups: ['teens'] },
+    { id: 'geography-gcse',  label: 'Geography (GCSE)',       icon: '🌍', desc: 'Human & physical geography, fieldwork & case studies',           ageGroups: ['teens'] },
+    { id: 'cs-gcse',         label: 'Computer Science (GCSE)',icon: '💻', desc: 'Algorithms, data structures, networks, Python & binary',         ageGroups: ['teens'] },
+    { id: 'french-gcse',     label: 'French (GCSE)',          icon: '🇫🇷', desc: 'Speaking, listening, reading, writing — AQA/Edexcel themes',    ageGroups: ['teens'] },
+    { id: 'spanish-gcse',    label: 'Spanish (GCSE)',         icon: '🇪🇸', desc: 'Speaking, listening, reading, writing — AQA/Edexcel themes',    ageGroups: ['teens'] },
+    // ── 11+ ────────────────────────────────────────────────────────
+    { id: 'eleven-plus',     label: '11+ Prep',               icon: '🎯', desc: 'Verbal reasoning, non-verbal reasoning, maths & comprehension',  ageGroups: ['kids'] },
     // ── Interview Prep / Career ─────────────────────────────────────
     { id: 'interview-tech',  label: 'Tech Interview',    icon: '💻', desc: 'DSA, system design, behavioural — FAANG & startup prep',         ageGroups: ['adults'] },
     { id: 'interview-gen',   label: 'Job Interview',     icon: '💼', desc: 'STAR method, competency questions, salary negotiation',          ageGroups: ['adults','teens'] },

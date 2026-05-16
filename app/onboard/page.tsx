@@ -210,8 +210,16 @@ function OnboardInner() {
               {/* Group subjects by category */}
               {[
                 {
-                  label: '📚 GCSE Subjects',
-                  ids: ['maths-gcse','english-gcse','science-gcse','history-gcse','geography-gcse'],
+                  label: '📚 GCSE Core',
+                  ids: ['maths-gcse','english-gcse','science-gcse'],
+                },
+                {
+                  label: '🔬 GCSE Triple Science',
+                  ids: ['biology-gcse','chemistry-gcse','physics-gcse'],
+                },
+                {
+                  label: '🌍 GCSE Humanities & Languages',
+                  ids: ['history-gcse','geography-gcse','cs-gcse','french-gcse','spanish-gcse'],
                 },
                 {
                   label: '🎯 11+ Preparation',
