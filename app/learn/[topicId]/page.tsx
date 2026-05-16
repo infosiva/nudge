@@ -2,12 +2,13 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, CheckCircle, Loader2, RotateCcw, FileText } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2, RotateCcw, FileText, Volume2, VolumeX } from 'lucide-react'
 import _config from '@/vertical.config'
 import type { AiToolConfig } from '@/vertical.config'
 import { theme, btn } from '@/lib/theme'
 import { useGate } from '@/lib/shared/useGate'
 import RegisterGate from '@/lib/shared/RegisterGate'
+import { useVoiceFeedback } from '@/lib/useVoiceFeedback'
 const config = _config as AiToolConfig
 
 interface Profile {
@@ -70,6 +71,8 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
   const [explainError, setExplainError]     = useState('')
 
   const { count: gateCount, showGate, increment: gateIncrement, onRegistered, dismissGate } = useGate('tutiq', 3)
+  const [voiceOn, setVoiceOn] = useState(true)
+  const { speakResult, speakQuestion, cancel: cancelVoice, supported: voiceSupported } = useVoiceFeedback()
 
   // Quiz state
   const [showQuiz, setShowQuiz]       = useState(false)
@@ -142,12 +145,13 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
     setSelected(opt)
     setRevealed(true)
     const q = questions[qIndex]
-    // Exact match only — substring match causes false positives (e.g. "T" inside "True")
     const correct = opt.trim().toLowerCase() === q.answer.trim().toLowerCase()
     if (correct) setScore(s => s + 1)
+    if (voiceOn) speakResult(correct, correct ? undefined : q.answer)
   }
 
   function nextQuestion() {
+    cancelVoice()
     window.scrollTo({ top: 0, behavior: 'smooth' })
     if (qIndex + 1 >= questions.length) {
       setQuizDone(true)
@@ -338,10 +342,23 @@ export default function TopicPage({ params }: { params: Promise<{ topicId: strin
 
           {!loadingQuiz && !quizError && !quizDone && q && (
             <div className="space-y-5">
-              {/* Quiz progress */}
-              <div className="flex justify-between text-xs text-white/40">
+              {/* Quiz progress + voice toggle */}
+              <div className="flex justify-between items-center text-xs text-white/40">
                 <span>Question {qIndex + 1} of {questions.length}</span>
-                <span>{score} correct so far</span>
+                <div className="flex items-center gap-3">
+                  <span>{score} correct</span>
+                  {voiceSupported && (
+                    <button
+                      onClick={() => { setVoiceOn(v => !v); if (voiceOn) cancelVoice() }}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg transition-colors"
+                      style={{ background: voiceOn ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.05)', color: voiceOn ? '#6ee7b7' : 'rgba(255,255,255,0.25)' }}
+                      title={voiceOn ? 'Turn off voice' : 'Turn on voice feedback'}
+                    >
+                      {voiceOn ? <Volume2 size={12} /> : <VolumeX size={12} />}
+                      <span style={{ fontSize: 10 }}>{voiceOn ? 'Voice on' : 'Voice off'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
                 <div
