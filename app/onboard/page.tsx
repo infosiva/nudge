@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react'
 import _config from '@/vertical.config'
@@ -28,15 +28,14 @@ function OnboardInner() {
   const router = useRouter()
   const params = useSearchParams()
 
-  const [step, setStep]     = useState(1)
-  const [name, setName]     = useState('')
-  const [age, setAge]       = useState<number | ''>('')
+  const [step, setStep]       = useState(1)
+  const [name, setName]       = useState('')
+  const [age, setAge]         = useState<number | ''>('')
   const [subject, setSubject] = useState(params.get('subject') ?? '')
-  const [level, setLevel]   = useState<Level>('beginner')
-  const [goal, setGoal]     = useState('')
-  const [errors, setErrors] = useState<Record<string, string>>({})
-
-  // If subject pre-selected from URL, jump straight to step 2 after name/age
+  const [level, setLevel]     = useState<Level>('beginner')
+  const [goal, setGoal]       = useState('')
+  const [errors, setErrors]   = useState<Record<string, string>>({})
+  const ctaRef                = useRef<HTMLDivElement>(null)
   const totalSteps = 4
 
   const isUnder13 = typeof age === 'number' && age >= 5 && age < 13
@@ -60,11 +59,32 @@ function OnboardInner() {
 
   function next() {
     if (step === 1 && !validateStep1()) return
-    // Under-13: show parental notice, do not advance to account creation
     if (step === 1 && isUnder13) { setParentalBlocked(true); return }
     if (step === 2 && !validateStep2()) return
     setErrors({})
     setStep(s => Math.min(s + 1, totalSteps))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function selectSubject(id: string) {
+    setSubject(id)
+    setErrors({})
+    // Scroll CTA into view, then auto-advance after short delay
+    setTimeout(() => ctaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
+    setTimeout(() => {
+      setErrors({})
+      setStep(s => Math.min(s + 1, totalSteps))
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 700)
+  }
+
+  function selectLevel(id: Level) {
+    setLevel(id)
+    // Auto-advance after brief delay so user sees the selection
+    setTimeout(() => {
+      setStep(s => Math.min(s + 1, totalSteps))
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 500)
   }
 
   function back() {
@@ -144,7 +164,7 @@ function OnboardInner() {
           {step === 1 && (
             <div className="fade-up">
               <h1 className="text-2xl font-extrabold text-white mb-2">Let&apos;s get to know you</h1>
-              <p className="text-white/50 mb-8">Nudge uses your age to tailor every lesson to your level.</p>
+              <p className="text-white/50 mb-8">Tutiq uses your age to tailor every lesson to your level.</p>
 
               <div className="space-y-5">
                 <div>
@@ -185,28 +205,52 @@ function OnboardInner() {
           {step === 2 && (
             <div className="fade-up">
               <h1 className="text-2xl font-extrabold text-white mb-2">What do you want to learn?</h1>
-              <p className="text-white/50 mb-6">Pick one subject — you can always start another later.</p>
+              <p className="text-white/50 mb-6">Tap a subject — we&apos;ll jump straight in.</p>
 
-              <div className="grid grid-cols-2 gap-3">
-                {config.subjects.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => { setSubject(s.id); setErrors({}) }}
-                    className={`p-4 rounded-xl border text-left transition-all duration-200 ${
-                      subject === s.id
-                        ? `border-emerald-500/60 bg-emerald-500/10`
-                        : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">{s.icon}</div>
-                    <div className="font-semibold text-white text-sm">{s.label}</div>
-                    <div className="text-white/45 text-xs mt-0.5 leading-snug">{s.desc}</div>
-                    {subject === s.id && (
-                      <CheckCircle size={14} className={`${theme.textAccent} mt-2`} />
-                    )}
-                  </button>
-                ))}
-              </div>
+              {/* Group subjects by category */}
+              {[
+                {
+                  label: '📚 GCSE Subjects',
+                  ids: ['maths-gcse','english-gcse','science-gcse','history-gcse','geography-gcse'],
+                },
+                {
+                  label: '🎯 11+ Preparation',
+                  ids: ['eleven-plus'],
+                },
+                {
+                  label: '💼 Interview Prep',
+                  ids: ['interview-tech','interview-gen','interview-nurse','interview-law'],
+                },
+              ].map(group => {
+                const groupSubjects = config.subjects.filter(s => group.ids.includes(s.id))
+                if (!groupSubjects.length) return null
+                return (
+                  <div key={group.label} className="mb-5">
+                    <p className="text-xs font-bold text-white/35 uppercase tracking-widest mb-2">{group.label}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {groupSubjects.map(s => (
+                        <button
+                          key={s.id}
+                          onClick={() => selectSubject(s.id)}
+                          className={`p-3.5 rounded-xl border text-left transition-all duration-200 flex items-center gap-3 ${
+                            subject === s.id
+                              ? `border-emerald-500/60 bg-emerald-500/10`
+                              : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]'
+                          }`}
+                        >
+                          <span className="text-xl shrink-0">{s.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-white text-sm leading-tight">{s.label}</div>
+                            <div className="text-white/40 text-xs mt-0.5 leading-snug truncate">{s.desc}</div>
+                          </div>
+                          {subject === s.id && <CheckCircle size={14} className={`${theme.textAccent} shrink-0`} />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+
               {errors.subject && <p className="text-red-400 text-xs mt-2">{errors.subject}</p>}
             </div>
           )}
@@ -215,13 +259,13 @@ function OnboardInner() {
           {step === 3 && (
             <div className="fade-up">
               <h1 className="text-2xl font-extrabold text-white mb-2">What&apos;s your current level?</h1>
-              <p className="text-white/50 mb-6">Be honest — Nudge adapts either way.</p>
+              <p className="text-white/50 mb-6">Be honest — Tutiq adapts either way. Tap to continue.</p>
 
               <div className="space-y-3">
                 {LEVELS.map(lv => (
                   <button
                     key={lv.id}
-                    onClick={() => setLevel(lv.id)}
+                    onClick={() => selectLevel(lv.id)}
                     className={`w-full p-4 rounded-xl border text-left transition-all duration-200 flex items-center gap-4 ${
                       level === lv.id
                         ? `border-emerald-500/60 bg-emerald-500/10`
@@ -266,7 +310,7 @@ function OnboardInner() {
           )}
 
           {/* Navigation */}
-          <div className="flex justify-between mt-8">
+          <div ref={ctaRef} className="flex justify-between mt-8">
             {step > 1 ? (
               <button onClick={back} className={btn.secondary + ' px-5 py-2.5'}>
                 <ArrowLeft size={16} /> Back
