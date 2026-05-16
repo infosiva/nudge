@@ -14,12 +14,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'topic required' }, { status: 400 })
     }
 
-    const cacheKey = `learn_explain_v2_${subject}_${level}_${age}_${topic}`
-
     const isGcse = subject?.includes('gcse')
     const is11plus = subject?.includes('eleven') || subject?.includes('11plus')
     const isVR = is11plus && topic?.toLowerCase().includes('verbal')
     const isNVR = is11plus && topic?.toLowerCase().includes('non-verbal')
+
+    // VR/NVR: no cache — always fresh examples so practice never repeats
+    const cacheKey = (isVR || isNVR)
+      ? `learn_explain_nocache_${Date.now()}`
+      : `learn_explain_v3_${subject}_${level}_${age}_${topic}`
     const isInterview = subject?.includes('interview')
 
     const examSection = isGcse

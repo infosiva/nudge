@@ -73,8 +73,8 @@ export default function LearnPage() {
       setTotalDone(done.length)
     }
 
-    // Load or generate topics
-    const topicKey = `nudge_topics_${p.subject}_${p.level}_${p.age}`
+    // Load or generate topics — v4 busts old cached paths
+    const topicKey = `nudge_topics_v4_${p.subject}_${p.level}_${p.age}`
     const cachedTopics = localStorage.getItem(topicKey)
     if (cachedTopics) {
       setTopics(JSON.parse(cachedTopics))
