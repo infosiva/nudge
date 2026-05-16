@@ -81,23 +81,50 @@ const CURRICULA: Record<string, Topic[]> = {
   ],
 
   'eleven-plus': [
-    // Verbal Reasoning
-    { id: 'vr-word-meanings',     title: 'Verbal Reasoning: Word Meanings', desc: 'Synonyms, antonyms, odd-one-out and word associations.' },
-    { id: 'vr-analogies',         title: 'Verbal Reasoning: Analogies',   desc: 'Word relationships and completing verbal analogy patterns.' },
-    { id: 'vr-sequences',         title: 'Verbal Reasoning: Letter & Word Sequences', desc: 'Completing letter sequences, codes and word patterns.' },
-    { id: 'vr-cloze',             title: 'Verbal Reasoning: Cloze & Comprehension', desc: 'Fill-in-the-blank and reading comprehension passages.' },
-    // Non-Verbal Reasoning
-    { id: 'nvr-shapes',           title: 'Non-Verbal: Shape Patterns',    desc: 'Identifying the next shape in a visual sequence.' },
-    { id: 'nvr-spatial',          title: 'Non-Verbal: Spatial Reasoning', desc: 'Rotating shapes, nets, reflections and 3D visualisation.' },
-    { id: 'nvr-matrices',         title: 'Non-Verbal: Matrices & Grids',  desc: 'Completing 3×3 grids and matrix pattern recognition.' },
-    // Maths
-    { id: '11plus-number',        title: '11+ Maths: Number & Operations', desc: 'Mental arithmetic, fractions, decimals and percentages under time pressure.' },
-    { id: '11plus-algebra',       title: '11+ Maths: Algebra & Sequences', desc: 'Simple algebra, number patterns and function machines.' },
-    { id: '11plus-geometry',      title: '11+ Maths: Shapes & Geometry',  desc: 'Area, perimeter, angles and 2D/3D shape properties.' },
-    { id: '11plus-data',          title: '11+ Maths: Data Handling',      desc: 'Charts, tables, averages and probability.' },
-    // English
-    { id: '11plus-comprehension', title: '11+ English: Comprehension',    desc: 'Answering comprehension questions on unseen passages accurately.' },
-    { id: '11plus-writing',       title: '11+ English: Creative Writing', desc: 'Planning and writing a structured, imaginative story or description.' },
+    // ── Verbal Reasoning (CEM + GL — 20 question types) ──────────────
+    { id: 'vr-synonyms',          title: 'VR: Synonyms & Antonyms',            desc: 'Find words closest or opposite in meaning — most common VR question type.' },
+    { id: 'vr-analogies',         title: 'VR: Word Analogies',                 desc: 'Complete word pairs: Cat is to kitten as dog is to ___.' },
+    { id: 'vr-odd-one-out',       title: 'VR: Odd One Out',                    desc: 'Identify the word that does not belong in a group.' },
+    { id: 'vr-word-codes',        title: 'VR: Word Codes & Ciphers',           desc: 'Decode letter codes to find a hidden word — e.g. if CAT = 3-1-20, what is DOG?' },
+    { id: 'vr-letter-sequences',  title: 'VR: Letter Sequences',               desc: 'Complete the next letter(s) in a sequence using alphabet position patterns.' },
+    { id: 'vr-number-sequences',  title: 'VR: Number Sequences in Words',      desc: 'Number-to-letter and mixed sequences: 2B, 4D, 6F, ___?' },
+    { id: 'vr-hidden-words',      title: 'VR: Hidden Words',                   desc: 'Find a word hidden at the end of one word and the start of the next.' },
+    { id: 'vr-compound-words',    title: 'VR: Compound Words',                 desc: 'Join two words to make a new word: HAND + ___ = HANDSHAKE.' },
+    { id: 'vr-word-connection',   title: 'VR: Word Connections',               desc: 'Find a word that connects two pairs: (FIRE ___ WORK) — what goes in the middle?' },
+    { id: 'vr-cloze',             title: 'VR: Cloze Passages',                 desc: 'Fill in missing words in a passage — tests vocabulary and reading in context.' },
+    { id: 'vr-comprehension',     title: 'VR: Reading Comprehension',          desc: 'Answer questions about an unseen passage — inference, fact and vocabulary.' },
+    { id: 'vr-shuffled-sentences',title: 'VR: Shuffled Sentences',             desc: 'Rearrange jumbled words to form a grammatically correct sentence.' },
+    { id: 'vr-double-meanings',   title: 'VR: Double Meanings (Homonyms)',      desc: 'Find the word that fits two different definitions: ___ can mean "fair" and "light colour".' },
+    { id: 'vr-algebra-words',     title: 'VR: Word Algebra (Letter Values)',    desc: 'If A=1, B=2… find the value of a word. Combines vocabulary and arithmetic.' },
+    // ── Non-Verbal Reasoning ──────────────────────────────────────────
+    { id: 'nvr-sequences',        title: 'NVR: Shape Sequences',               desc: 'Find the next shape in a visual sequence using size, rotation and shading rules.' },
+    { id: 'nvr-odd-one-out',      title: 'NVR: Odd One Out (Shapes)',          desc: 'Identify which shape does not share the same properties as the others.' },
+    { id: 'nvr-matrices',         title: 'NVR: Matrices (3×3 Grids)',          desc: 'Complete a 3×3 grid by spotting the rule governing rows and columns.' },
+    { id: 'nvr-analogies',        title: 'NVR: Shape Analogies',               desc: 'Shape A is to Shape B as Shape C is to ___.' },
+    { id: 'nvr-rotation',         title: 'NVR: Rotations & Reflections',       desc: 'Identify a shape after rotation or reflection — avoid confusing them.' },
+    { id: 'nvr-nets',             title: 'NVR: Nets & 3D Shapes',              desc: 'Which net folds to make this 3D shape? Common GL paper question.' },
+    { id: 'nvr-paper-folding',    title: 'NVR: Paper Folding & Punching',      desc: 'Visualise holes when paper is folded then punched — tricky spatial skill.' },
+    { id: 'nvr-cubes',            title: 'NVR: Cubes & Spatial Reasoning',     desc: 'Count cubes in a 3D arrangement and identify cube faces.' },
+    { id: 'nvr-codes',            title: 'NVR: Shape Codes',                   desc: 'Decode shapes using a rule (e.g. size=letter, shading=number) to find the answer code.' },
+    // ── 11+ Maths ────────────────────────────────────────────────────
+    { id: '11m-number',           title: 'Maths: Number, Place Value & Rounding', desc: 'Integers, decimals, place value, rounding and negative numbers at speed.' },
+    { id: '11m-fractions',        title: 'Maths: Fractions, Decimals & Percentages', desc: 'Converting between forms, finding percentages, fraction of an amount.' },
+    { id: '11m-ratio',            title: 'Maths: Ratio & Proportion',          desc: 'Sharing in a ratio, scaling recipes, direct proportion problems.' },
+    { id: '11m-algebra',          title: 'Maths: Algebra & Function Machines', desc: 'Simple equations, substitution, function machines and number patterns.' },
+    { id: '11m-sequences',        title: 'Maths: Number Sequences & Patterns', desc: 'Arithmetic sequences, nth term rules and Fibonacci-style patterns.' },
+    { id: '11m-geometry',         title: 'Maths: Shapes, Area & Perimeter',   desc: 'Properties of 2D/3D shapes, area, perimeter, volume and coordinates.' },
+    { id: '11m-angles',           title: 'Maths: Angles & Symmetry',          desc: 'Angle rules, angles in polygons, lines of symmetry and rotational symmetry.' },
+    { id: '11m-data',             title: 'Maths: Data, Charts & Averages',    desc: 'Reading charts and tables, mean, median, mode, range and probability.' },
+    { id: '11m-time-money',       title: 'Maths: Time, Money & Word Problems',desc: 'Reading timetables, calculating change, multi-step word problems under time.' },
+    // ── 11+ English ──────────────────────────────────────────────────
+    { id: '11e-comprehension',    title: 'English: Comprehension Passages',    desc: 'Answering literal, inferential and vocabulary questions on unseen texts.' },
+    { id: '11e-vocabulary',       title: 'English: Vocabulary & Word Choice', desc: 'High-frequency 11+ vocabulary, context clues and precise word selection.' },
+    { id: '11e-grammar',          title: 'English: Grammar & Punctuation',    desc: 'Nouns, verbs, adjectives, adverbs, clauses, punctuation for 11+ papers.' },
+    { id: '11e-story-writing',    title: 'English: Story & Creative Writing', desc: 'Planning and writing a structured story with strong opening, middle and end.' },
+    { id: '11e-persuasive',       title: 'English: Persuasive & Descriptive Writing', desc: 'Writing to persuade or describe — techniques, structure and vocabulary.' },
+    // ── Exam Strategy ────────────────────────────────────────────────
+    { id: '11-time-technique',    title: '11+ Exam Technique & Timing',       desc: 'When to skip, how to guess intelligently, pacing strategies for CEM and GL.' },
+    { id: '11-cem-vs-gl',         title: 'CEM vs GL Assessment: Know the Difference', desc: 'Format differences, question styles and how to prepare for your specific test.' },
   ],
 
   'biology-gcse': [

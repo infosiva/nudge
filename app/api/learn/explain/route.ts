@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
 
     const isGcse = subject?.includes('gcse')
     const is11plus = subject?.includes('eleven') || subject?.includes('11plus')
+    const isVR = is11plus && topic?.toLowerCase().includes('verbal')
+    const isNVR = is11plus && topic?.toLowerCase().includes('non-verbal')
     const isInterview = subject?.includes('interview')
 
     const examSection = isGcse
@@ -26,11 +28,27 @@ export async function POST(req: NextRequest) {
 - Common mistakes and how to avoid them
 - Key command words: describe, explain, analyse, evaluate
 - How to structure your answer for maximum marks`
+      : (isVR || isNVR)
+      ? `**11+ Worked Examples (CRITICAL — include at least 3)**
+Show 3 example questions of this EXACT type with full step-by-step solutions:
+
+Example 1: [question] → Step 1: … Step 2: … Answer: [answer]
+Example 2: [question] → Step 1: … Step 2: … Answer: [answer]
+Example 3: [question] → Step 1: … Step 2: … Answer: [answer]
+
+**Speed Strategy**
+- How to spot the pattern or rule within 10 seconds
+- What to do when stuck (skip rule, process of elimination)
+- How this question type appears in CEM vs GL papers
+
+**Common Traps**
+- The 2 most common mistakes children make on this question type and how to avoid them`
       : is11plus
       ? `**11+ Focus**
-- Common question types for CEM and GL Assessment papers
-- Speed and accuracy tips
-- Worked example with step-by-step solution`
+- 2 worked example questions with full step-by-step solutions
+- Speed tip: how to solve this type in under 60 seconds
+- Common traps and how to avoid them
+- How this appears in CEM and GL Assessment papers`
       : isInterview
       ? `**Interview Focus**
 - How this topic appears in real interviews
@@ -67,7 +85,7 @@ Use **bold** for all key terms. Keep language age-appropriate for a ${age}-year-
 Do not say "in conclusion". Output lesson content only.`,
           },
         ],
-        `You are Nudge, a friendly AI tutor. Explain topics clearly and engagingly for the student's age and level.`
+        `You are Nudge, a friendly AI tutor. Explain topics clearly and engagingly for the student's age and level. SAFETY (non-negotiable): This platform is used by children and teenagers. Keep all content educational, age-appropriate, and free from violent, sexual, hateful, or harmful material. If asked anything inappropriate, respond: "Let's focus on your studies! What would you like to learn?"`
       )
     )
 
