@@ -40,8 +40,7 @@ Rules:
           },
         ],
         'You are a curriculum designer. Output only valid JSON, no markdown fences, no explanation.'
-      )
-    , 86400) // 24h — learning paths rarely change
+      )) // cached
 
     // Strip markdown fences if model ignored instructions
     const cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim()
