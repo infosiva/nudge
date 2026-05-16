@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
+
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['600', '700', '800'], variable: '--font-display' })
 import Script from 'next/script'
 import './globals.css'
 import config from '@/vertical.config'
@@ -12,7 +14,7 @@ import FeedbackWidget from '@/components/FeedbackWidget'
 import CookieConsent from "../components/CookieConsent";
 import Footer from "../components/Footer";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-body' })
 
 export const metadata: Metadata = {
   title:       config.metaTitle,
@@ -37,7 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       } as React.CSSProperties}
       suppressHydrationWarning
     >
-      <body className={`${inter.className} min-h-full flex flex-col text-white`}
+      <body className={`${inter.variable} ${jakarta.variable} min-h-full flex flex-col text-white`}
+        style={{ fontFamily: 'var(--font-body, system-ui)' }}
         style={{ background: colors.base }}
       >
         {/* Dynamic mesh gradient bg — changes per vertical */}
