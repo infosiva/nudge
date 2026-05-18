@@ -209,10 +209,6 @@ export default function HomePage() {
 
             {/* Trust bar */}
             <div className="flex flex-wrap items-center gap-3 text-xs text-white/30 mb-2">
-              <span className="flex items-center gap-1"><span className="text-yellow-400">★★★★★</span> 4.8/5</span>
-              <span>·</span>
-              <span>1,800+ students</span>
-              <span>·</span>
               <span>GCSE · 11+ · Interview</span>
               <span>·</span>
               <a href="/pricing" className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition">See pricing</a>
@@ -321,10 +317,10 @@ export default function HomePage() {
         style={{ background: 'rgba(6,78,59,0.12)' }}>
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { n: '5,000+', l: 'Students helped',    icon: Users },
+            { n: 'Free',   l: 'No credit card',    icon: Users },
             { n: '10+',    l: 'Subjects covered',   icon: BookOpen },
             { n: '24/7',   l: 'Always available',   icon: Clock },
-            { n: '4.9★',   l: 'Average rating',     icon: Trophy },
+            { n: '10min',  l: 'Avg session',         icon: Trophy },
           ].map(s => (
             <div key={s.l} className="flex flex-col items-center gap-1">
               <s.icon size={18} className="text-emerald-500/60 mb-1" />

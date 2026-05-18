@@ -54,10 +54,10 @@ const POSTS = [
 ]
 
 const STATS = [
-  { label: 'Active students', value: '1,800+' },
   { label: 'Learning tracks', value: '3' },
   { label: 'Exam boards', value: 'AQA · OCR · Edexcel' },
-  { label: 'Avg rating', value: '4.8★' },
+  { label: 'Free sessions', value: '3 included' },
+  { label: 'Credit card', value: 'Not needed' },
 ]
 
 export default function SocialPage() {
@@ -86,8 +86,7 @@ export default function SocialPage() {
             GCSE, 11+ prep, and interview coaching. The AI adapts to your level and explains until you get it.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8 text-xs text-white/30">
-            <span className="text-yellow-400">★★★★★</span>
-            <span>4.8/5 · 1,800+ students · 3 free sessions to start</span>
+            <span>GCSE · 11+ · Interview · 3 free sessions to start</span>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/" className="px-8 py-3.5 rounded-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 transition text-white text-sm">
