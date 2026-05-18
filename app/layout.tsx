@@ -92,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FooterExtras />
         <Footer siteName={config.name} />
       <CookieConsent />
+        <Script async src="http://31.97.56.148:3100/script.js" data-website-id="7ef81f7e-0740-4833-a017-5fe761072d37" strategy="afterInteractive" />
       </body>
     </html>
   )
