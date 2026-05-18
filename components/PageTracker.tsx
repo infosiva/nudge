@@ -11,6 +11,19 @@ import { usePathname } from 'next/navigation'
 
 const TRACKER = 'http://31.97.56.148:3098/track'
 const SESSION_ENDPOINT = 'http://31.97.56.148:3098/session'
+const EVENT_ENDPOINT = 'http://31.97.56.148:3098/event'
+
+function getNavDepth(path: string): number {
+  const segs = path.replace(/^\//, '').split('/').filter(Boolean)
+  if (segs.length === 0) return 1
+  if (segs.length === 1) return 2
+  return 3
+}
+
+function getPageCategory(): string | null {
+  try { return document.querySelector('[data-page-category]')?.getAttribute('data-page-category') ?? null }
+  catch { return null }
+}
 
 function getSid(): string {
   try {
@@ -33,12 +46,18 @@ export default function PageTracker({ site }: { site: string }) {
     pageCount.current++
     entryTime.current = Date.now()
 
+    const depth = getNavDepth(pathname)
+    const category = getPageCategory()
+
     navigator.sendBeacon(TRACKER, JSON.stringify({
       site,
       path:       pathname,
       referrer:   document.referrer || null,
       session_id: sid.current,
     }))
+
+    navigator.sendBeacon(EVENT_ENDPOINT, JSON.stringify({ site, session_id: sid.current, name: 'nav_depth', value: String(depth) }))
+    if (category) navigator.sendBeacon(EVENT_ENDPOINT, JSON.stringify({ site, session_id: sid.current, name: 'page_category', value: category }))
   }, [pathname, site])
 
   // Send session summary on tab close
