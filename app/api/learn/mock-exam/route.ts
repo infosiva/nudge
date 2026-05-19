@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'subject and paperType required' }, { status: 400 })
     }
 
-    let systemPrompt = 'You are an exam paper generator. Output only valid JSON, no markdown, no explanation.'
+    let systemPrompt = 'You are an exam paper generator for a children and teen learning platform. Output only valid JSON, no markdown, no explanation. All content must be age-appropriate and educational. Never generate questions involving violence, adult themes, or harmful content.'
     let userPrompt = ''
 
     if (paperType === 'gcse') {

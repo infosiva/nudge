@@ -35,22 +35,32 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop nav — clean text links with amber hover underline */}
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
+            <Link href="/"
+              className="relative hover:text-emerald-300 transition-colors group">
+              Home
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-emerald-400/70" />
+            </Link>
+            <Link href="/#features"
+              className="relative hover:text-emerald-300 transition-colors group">
+              Features
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-emerald-400/70" />
+            </Link>
             <Link href="/#subjects"
-              className="relative hover:text-amber-300 transition-colors group">
+              className="relative hover:text-emerald-300 transition-colors group">
               Subjects
-              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-amber-400/70" />
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-emerald-400/70" />
             </Link>
-            <Link href="/#how-it-works"
-              className="relative hover:text-amber-300 transition-colors group">
-              How it works
-              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-amber-400/70" />
+            <Link href="/pricing"
+              className="relative hover:text-emerald-300 transition-colors group">
+              Pricing
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-emerald-400/70" />
             </Link>
-            <Link href="/learn"
-              className="relative hover:text-amber-300 transition-colors group">
-              My Learning
-              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-amber-400/70" />
+            <Link href="/about"
+              className="relative hover:text-emerald-300 transition-colors group">
+              About
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300 bg-emerald-400/70" />
             </Link>
           </div>
 
@@ -83,9 +93,11 @@ export default function Navbar() {
         {open && (
           <div className="md:hidden border-t border-white/[0.05] px-6 py-5 flex flex-col gap-4 text-sm"
             style={{ background: 'rgba(15,14,12,0.97)' }}>
-            <Link href="/#subjects" className="text-white/70 hover:text-amber-300 transition-colors" onClick={() => setOpen(false)}>Subjects</Link>
-            <Link href="/#how-it-works" className="text-white/70 hover:text-amber-300 transition-colors" onClick={() => setOpen(false)}>How it works</Link>
-            <Link href="/learn" className="text-white/70 hover:text-amber-300 transition-colors" onClick={() => setOpen(false)}>My Learning</Link>
+            <Link href="/" className="text-white/70 hover:text-emerald-300 transition-colors" onClick={() => setOpen(false)}>Home</Link>
+            <Link href="/#features" className="text-white/70 hover:text-emerald-300 transition-colors" onClick={() => setOpen(false)}>Features</Link>
+            <Link href="/#subjects" className="text-white/70 hover:text-emerald-300 transition-colors" onClick={() => setOpen(false)}>Subjects</Link>
+            <Link href="/pricing" className="text-white/70 hover:text-emerald-300 transition-colors" onClick={() => setOpen(false)}>Pricing</Link>
+            <Link href="/about" className="text-white/70 hover:text-emerald-300 transition-colors" onClick={() => setOpen(false)}>About</Link>
             {user ? (
               <>
                 <span className="text-center text-white/40 text-xs">Signed in as {user.email}</span>

@@ -18,25 +18,25 @@ import Footer from "../components/Footer";
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' })
 
 export const metadata: Metadata = {
-  title:        config.metaTitle,
-  description:  config.metaDescription,
+  title:        'Tutiq — Your Personal AI Tutor',
+  description:  'Get instant homework help and personalised tutoring from AI. Works for all subjects and ages.',
   keywords:     config.keywords,
-  metadataBase: new URL(`https://${config.domain}`),
+  metadataBase: new URL('https://tutiq.app'),
   alternates:   { canonical: '/' },
   openGraph: {
-    title:       config.metaTitle,
-    description: config.metaDescription,
-    url:         `https://${config.domain}`,
-    siteName:    config.name,
+    title:       'Tutiq — Your Personal AI Tutor',
+    description: 'Get instant homework help and personalised tutoring from AI. Works for all subjects and ages.',
+    url:         'https://tutiq.app',
+    siteName:    'Tutiq',
     type:        'website',
     locale:      'en_GB',
-    images: [{ url: `/opengraph-image`, width: 1200, height: 630, alt: `${config.name} — ${config.tagline}` }],
+    images: [{ url: `/opengraph-image`, width: 1200, height: 630, alt: `Tutiq — Your Personal AI Tutor` }],
   },
   twitter: {
     card:        'summary_large_image',
-    title:       config.metaTitle,
-    description: config.metaDescription,
-    images:      [`https://${config.domain}/opengraph-image`],
+    title:       'Tutiq — Your Personal AI Tutor',
+    description: 'Get instant homework help and personalised tutoring from AI. Works for all subjects and ages.',
+    images:      [`https://tutiq.app/opengraph-image`],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 }
@@ -92,6 +92,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FooterExtras />
         <Footer siteName={config.name} />
       <CookieConsent />
+        {/* JSON-LD structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'Tutiq',
+            applicationCategory: 'EducationalApplication',
+            operatingSystem: 'Web',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+            description: 'Get instant homework help and personalised tutoring from AI. Works for all subjects and ages.',
+            url: 'https://tutiq.app',
+          })}}
+        />
         <Script async src="http://31.97.56.148:3100/script.js" data-website-id="7ef81f7e-0740-4833-a017-5fe761072d37" strategy="afterInteractive" />
       </body>
     </html>

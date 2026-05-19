@@ -2,8 +2,26 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle, BookOpen, Layers, Zap, Star, Lock, BarChart2, FileText, GraduationCap, Trophy, Users, Clock, Upload } from 'lucide-react'
 import GuidedTour, { type TourStep } from '@/components/GuidedTour'
+import { siteConfig } from '@/site.config'
+
+function postStats() {
+  if (typeof window === 'undefined') return
+  try {
+    fetch('http://31.97.56.148:3099/api/stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        site: 'tutiq.app',
+        path: window.location.pathname,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+      }),
+    }).catch(() => {})
+  } catch {}
+}
 
 const NUDGE_TOUR: TourStep[] = [
   { target: '#hero-cta', title: 'Start learning free', icon: '🚀', body: 'Get 3 free AI sessions — no account needed. Just pick a track and go.', placement: 'bottom' },
@@ -75,18 +93,13 @@ const PRO_FEATURES = [
   { icon: FileText,  label: 'PDF study guides',      desc: 'Download summaries for every topic you cover' },
 ]
 
-// ── Testimonials ──────────────────────────────────────────────
-const TESTIMONIALS = [
-  { name: 'Priya S.', role: 'Grade 10 Student', text: 'My maths grade went from C to A in 6 weeks. The step-by-step explanations are incredible!', stars: 5 },
-  { name: 'James T.', role: 'Parent', text: 'My son finally understands physics. It\'s like having a patient tutor on demand 24/7.', stars: 5 },
-  { name: 'Aisha K.', role: 'College Freshman', text: 'Used Tutiq to catch up on chemistry before exams. Passed with distinction!', stars: 5 },
-]
-
 export default function HomePage() {
   const [isPro, setIsPro]                   = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [upgraded, setUpgraded]             = useState(false)
   const [chatStep, setChatStep]             = useState(0)
+
+  useEffect(() => { postStats() }, [])
 
   useEffect(() => {
     if (localStorage.getItem('tutiq-pro') === '1') setIsPro(true)
@@ -175,7 +188,11 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
 
           {/* Left: headline + CTA */}
-          <div className="fade-up">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             {/* Social proof badge */}
             <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold mb-7"
               style={{ borderColor: 'rgba(16,185,129,0.30)', background: 'rgba(16,185,129,0.08)', color: 'rgba(110,231,183,0.90)' }}>
@@ -239,7 +256,7 @@ export default function HomePage() {
               <span>✓ 3 free sessions — no account needed</span>
               <span>✓ Pro unlocks unlimited sessions + all subjects for $8/mo</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right: chat preview mockup */}
           <div className="hidden md:flex justify-center items-center">
@@ -330,6 +347,28 @@ export default function HomePage() {
               </div>
               <div className="text-white/40 text-xs">{s.l}</div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FEATURES ─────────────────────────────────────────── */}
+      <section id="features" className="py-12 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.05]">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-black text-white mb-2">Everything you need to learn faster</h2>
+          <p className="text-white/40 text-sm">AI-powered, free to start, works on any device</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {siteConfig.features.map((f, i) => (
+            <motion.div key={f.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              viewport={{ once: true }}
+              className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-5 flex flex-col gap-2">
+              <span className="text-2xl">{f.icon}</span>
+              <div className="font-bold text-white text-sm">{f.title}</div>
+              <div className="text-white/45 text-xs leading-relaxed">{f.desc}</div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -589,38 +628,6 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ─────────────────────────────────────── */}
-      <section className="py-20 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
-              <Trophy size={12} /> Social proof
-            </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Students love Tutiq</h2>
-            <p className="text-white/40 text-sm">Real results from real students — across every subject and age group.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-5">
-            {TESTIMONIALS.map((t, i) => (
-              <div key={i} className="rounded-2xl border border-white/[0.07] p-6"
-                style={{ background: 'rgba(6,78,59,0.12)' }}>
-                <div className="stars text-sm mb-3">{'★'.repeat(t.stars)}</div>
-                <p className="text-white/70 text-sm leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <div className="text-white text-xs font-semibold">{t.name}</div>
-                    <div className="text-white/35 text-[11px]">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

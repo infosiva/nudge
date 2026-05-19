@@ -5,7 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 // TutiqAI — emerald theme, bottom-right, learning assistant
 const ACCENT = '#10b981'
 const BOT_NAME = 'TutiqAI'
-const WELCOME = '📚 Hi! I\'m TutiqAI — your personal learning guide. Ask me to explain any topic, suggest a study plan, or help you understand something tricky!'
+const WELCOME = 'Hi! What subject would you like help with today?'
 const SYSTEM_PROMPT = `You are TutiqAI, the AI learning assistant for Tutiq — a personalized AI tutor platform.
 Help students understand concepts, break down complex topics, suggest study strategies, and make learning engaging.
 Adapt your language to the student's level. Be encouraging, patient, and clear.
