@@ -144,7 +144,7 @@ export default function HomePage() {
       )}
 
       {/* ── HERO ────────────────────────────────────────────── */}
-      <section className="relative px-6 pt-16 pb-12 overflow-hidden">
+      <section className="relative px-6 pt-10 pb-8 sm:pt-16 sm:pb-12 overflow-hidden">
         {/* Background geometric shapes — emerald/teal soft glow */}
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           {/* Large emerald blob top-left */}
@@ -203,13 +203,13 @@ export default function HomePage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-5">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-4">
               <span className="text-white/90 block">Ace your exams.</span>
               <span className="block"
                 style={{ background: 'linear-gradient(135deg, #10b981 0%, #6ee7b7 50%, #14b8a6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Land your dream job.
               </span>
-              <span className="text-white/70 text-4xl md:text-5xl block mt-2 leading-snug">AI tutor, always ready.</span>
+              <span className="text-white/70 text-3xl sm:text-4xl md:text-5xl block mt-2 leading-snug">AI tutor, always ready.</span>
             </h1>
 
             <p className="text-white/50 text-base md:text-lg leading-relaxed mb-8 max-w-md">
@@ -332,7 +332,7 @@ export default function HomePage() {
       </section>
 
       {/* ── STATS ────────────────────────────────────────────── */}
-      <section className="border-y border-white/[0.06] py-10"
+      <section className="border-y border-white/[0.06] py-6 sm:py-10"
         style={{ background: 'rgba(6,78,59,0.12)' }}>
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
@@ -354,7 +354,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────── */}
-      <section id="features" className="py-12 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.05]">
+      <section id="features" className="py-8 sm:py-12 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.05]">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-black text-white mb-2">Everything you need to learn faster</h2>
           <p className="text-white/40 text-sm">AI-powered, free to start, works on any device</p>
@@ -376,7 +376,7 @@ export default function HomePage() {
       </section>
 
       {/* ── 3 AUDIENCE TRACKS ────────────────────────────────── */}
-      <section className="py-16 px-6">
+      <section className="py-10 sm:py-16 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Who is Tutiq for?</h2>
@@ -412,7 +412,7 @@ export default function HomePage() {
       </section>
 
       {/* ── SUBJECT CARDS ────────────────────────────────────── */}
-      <section id="subjects" className="py-12 px-6">
+      <section id="subjects" className="py-8 sm:py-12 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
@@ -440,7 +440,7 @@ export default function HomePage() {
       </section>
 
       {/* ── GAMES & PRACTICE ─────────────────────────────────── */}
-      <section className="py-16 px-6 border-y border-white/[0.06]" style={{ background: 'rgba(6,78,59,0.08)' }}>
+      <section className="py-10 sm:py-16 px-6 border-y border-white/[0.06]" style={{ background: 'rgba(6,78,59,0.08)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-amber-400 mb-4">
@@ -476,7 +476,7 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
-      <section id="how-it-works" className="py-10 px-6 border-y border-white/[0.06]"
+      <section id="how-it-works" className="py-6 sm:py-10 px-6 border-y border-white/[0.06]"
         style={{ background: 'rgba(6,78,59,0.08)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -506,7 +506,7 @@ export default function HomePage() {
       </section>
 
       {/* ── LESSON PATH ──────────────────────────────────────── */}
-      <section className="py-10 px-6">
+      <section className="py-6 sm:py-10 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
@@ -557,7 +557,7 @@ export default function HomePage() {
       </section>
 
       {/* ── EXAM TIMER / TIMED PRACTICE ──────────────────────── */}
-      <section className="py-16 px-6 border-t border-white/[0.06]" style={{ background: 'rgba(6,78,59,0.06)' }}>
+      <section className="py-10 sm:py-16 px-6 border-t border-white/[0.06]" style={{ background: 'rgba(6,78,59,0.06)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-amber-400 mb-4">
@@ -586,7 +586,7 @@ export default function HomePage() {
       </section>
 
       {/* ── STUDY BUDDY CTA ──────────────────────────────────── */}
-      <section className="py-16 px-6">
+      <section className="py-10 sm:py-16 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="rounded-2xl border border-emerald-500/20 p-8 md:p-12 flex flex-col md:flex-row items-center gap-8"
             style={{ background: 'linear-gradient(135deg, rgba(6,78,59,0.25), rgba(5,150,105,0.10))' }}>
@@ -635,7 +635,7 @@ export default function HomePage() {
       </section>
 
       {/* ── PRICING — FREE vs PRO ────────────────────────────── */}
-      <section id="pricing" className="py-10 px-6 border-y border-white/[0.06]"
+      <section id="pricing" className="py-6 sm:py-10 px-6 border-y border-white/[0.06]"
         style={{ background: 'rgba(6,78,59,0.08)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -713,7 +713,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="py-10 px-6 relative overflow-hidden">
+      <section className="py-6 sm:py-10 px-6 relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute inset-x-1/4 top-0 h-full rounded-full blur-3xl opacity-[0.06]"
             style={{ background: 'radial-gradient(ellipse, #10b981 0%, transparent 70%)' }} />
