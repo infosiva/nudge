@@ -24,7 +24,7 @@ function postStats() {
 }
 
 const NUDGE_TOUR: TourStep[] = [
-  { target: '#hero-cta', title: 'Start learning free', icon: '🚀', body: 'Get 3 free AI sessions — no account needed. Just pick a track and go.', placement: 'bottom' },
+  { target: '#hero-cta', title: 'Start learning free', icon: '🚀', body: 'Get 5 free AI sessions — no account needed. Just pick a subject and go.', placement: 'bottom' },
   { target: '#subjects', title: 'Choose your track', icon: '🎓', body: 'GCSE, A-Level, or adult skills — Nudge adapts explanations to your exact level.', placement: 'top' },
   { target: '#how-it-works', title: 'How it works', icon: '🧠', body: 'Type a question, get a patient AI tutor. No time limit, no judgement.', placement: 'top' },
   { target: '#pricing', title: 'Unlock unlimited', icon: '⚡', body: 'Go Pro for $8/mo — unlimited sessions across all subjects.', placement: 'top' },
@@ -94,6 +94,8 @@ const PRO_FEATURES = [
 ]
 
 export default function HomePage() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const [isPro, setIsPro]                   = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [upgraded, setUpgraded]             = useState(false)
@@ -216,7 +218,7 @@ export default function HomePage() {
 
             {/* Trust pills */}
             <div className="flex flex-wrap gap-2 mb-9">
-              {['AQA · Edexcel · OCR aligned', '3 free sessions', 'STAR method coaching', 'Mock interviews'].map(t => (
+              {['AQA · Edexcel · OCR aligned', '5 free sessions', 'STAR method coaching', 'Mock interviews'].map(t => (
                 <span key={t} className="rounded-full border px-3.5 py-1 text-xs font-medium"
                   style={{ borderColor: 'rgba(16,185,129,0.22)', color: 'rgba(110,231,183,0.70)', background: 'rgba(16,185,129,0.06)' }}>
                   · {t}
@@ -360,7 +362,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {siteConfig.features.map((f, i) => (
             <motion.div key={f.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={mounted ? { opacity: 0, y: 20 } : false}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
               viewport={{ once: true }}
@@ -417,7 +419,7 @@ export default function HomePage() {
               <Layers size={12} /> Topics
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">Pick a topic, start immediately</h2>
-            <p className="text-white/40 text-sm max-w-md mx-auto">No account needed. 3 free sessions. Your AI tutor builds a personalised plan in seconds.</p>
+            <p className="text-white/40 text-sm max-w-md mx-auto">No account needed. 5 free sessions. Your AI tutor builds a personalised plan in seconds.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {SUBJECTS.map(subject => (
