@@ -142,7 +142,7 @@ export default function HomePage() {
       )}
 
       {/* ── HERO ────────────────────────────────────────────── */}
-      <section className="relative px-6 pt-16 pb-24 overflow-hidden">
+      <section className="relative px-6 pt-16 pb-12 overflow-hidden">
         {/* Background geometric shapes — emerald/teal soft glow */}
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
           {/* Large emerald blob top-left */}
@@ -474,7 +474,7 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 px-6 border-y border-white/[0.06]"
+      <section id="how-it-works" className="py-10 px-6 border-y border-white/[0.06]"
         style={{ background: 'rgba(6,78,59,0.08)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -504,7 +504,7 @@ export default function HomePage() {
       </section>
 
       {/* ── LESSON PATH ──────────────────────────────────────── */}
-      <section className="py-20 px-6">
+      <section className="py-10 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-4">
@@ -633,7 +633,7 @@ export default function HomePage() {
       </section>
 
       {/* ── PRICING — FREE vs PRO ────────────────────────────── */}
-      <section id="pricing" className="py-20 px-6 border-y border-white/[0.06]"
+      <section id="pricing" className="py-10 px-6 border-y border-white/[0.06]"
         style={{ background: 'rgba(6,78,59,0.08)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -711,7 +711,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="py-20 px-6 relative overflow-hidden">
+      <section className="py-10 px-6 relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute inset-x-1/4 top-0 h-full rounded-full blur-3xl opacity-[0.06]"
             style={{ background: 'radial-gradient(ellipse, #10b981 0%, transparent 70%)' }} />
