@@ -1,0 +1,22 @@
+# Tutiq
+> AI personal tutor for students K-12 to university. Get instant homework help and personalised explanations for any subject.
+
+## What this site does
+Tutiq is an AI-powered personal tutor that helps students from primary school through to university. Ask any question across any subject — maths, science, English, history — and get a clear, personalised explanation at exactly the right level. The AI adapts its language and depth to your age and understanding.
+
+## Who it's for
+Students aged 6 to 22, parents supporting homework, and lifelong learners. Works for K-12 schoolwork, GCSE, A-level, university coursework, and beyond.
+
+## Key features
+- Instant AI explanations across all subjects
+- Age-adaptive tutoring — adjusts to your level
+- Step-by-step homework help
+- Practice questions and quizzes
+- Study path builder — AI creates a personalised learning plan
+- Progress tracking across topics
+
+## Pricing
+Free tier available with 10 tutoring sessions per day. Pro plan from $5.99/month for unlimited sessions.
+
+## Contact
+https://tutiq.app
